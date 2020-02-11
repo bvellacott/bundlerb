@@ -1,3 +1,3 @@
 # bundler-bee
 
-for darling Lukas
+for Lukas
