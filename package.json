@@ -1,0 +1,53 @@
+{
+  "name": "bundler-bee",
+  "version": "1.0.0",
+  "description": "bundles on the fly",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "start:assets": "node asset-server/index.js",
+    "start:dev": "concurrently \"node server/index.js\" \"node asset-server/index.js\"",
+    "start:dev:debug": "concurrently \"node server/index.js\" \"node --inspect-brk asset-server/index.js\"",
+    "start:electron": "electron .",
+    "start:electron:debug": "electron --inspect-brk=6000 ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bvellacott/bundler-bee.git"
+  },
+  "keywords": [
+    "bundle",
+    "js",
+    "babel",
+    "postcss",
+    "all",
+    "code",
+    "no",
+    "config"
+  ],
+  "author": "Benjamin Vellacott",
+  "license": "GPL-2.0-only",
+  "bugs": {
+    "url": "https://github.com/bvellacott/bundler-bee/issues"
+  },
+  "homepage": "https://github.com/bvellacott/bundler-bee#readme",
+  "dependencies": {
+    "@babel/core": "^7.8.4",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/plugin-syntax-jsx": "^7.8.3",
+    "@babel/plugin-transform-classes": "^7.8.3",
+    "@babel/plugin-transform-destructuring": "^7.8.3",
+    "@babel/plugin-transform-modules-amd": "^7.8.3",
+    "@babel/plugin-transform-modules-commonjs": "^7.8.3",
+    "@babel/plugin-transform-react-jsx": "^7.8.3",
+    "concat-with-sourcemaps": "^1.1.0",
+    "express": "^4.17.1",
+    "node-libs-browser": "^2.2.1",
+    "node-watch": "^0.6.3",
+    "pirates": "^4.0.1",
+    "postcss-custom-properties": "^9.0.2",
+    "postcss-nested": "^4.2.1",
+    "preact": "^10.3.1",
+    "preact-render-to-string": "^5.1.4"
+  }
+}
