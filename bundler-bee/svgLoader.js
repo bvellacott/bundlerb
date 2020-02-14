@@ -1,6 +1,9 @@
 const loadSvgTarget = (module) => new Promise((resolve) => {
   module.js = module.js || { result: {} }
-  module.js.contents = `export default "${module.contents.replace(/"/g, '\\"').replace(/\n/g, '')}"\n`
+  module.js.contents = `
+import { h } from 'preact'
+export default () => ${module.contents.replace(/\n/g, '')}
+`
   return resolve(module)
 })
 

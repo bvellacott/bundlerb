@@ -13,11 +13,17 @@ const setupBabelSsr = (index) => {
 	}
 	
 	const handleJSX = (contents, filename) => {
+		if (filename.endsWith('.svg')) {
+			contents = `
+import { h } from 'preact'
+export default () => ${contents.replace(/\n/g, '')}
+`
+		}
 		const transformed = babel.transformSync(contents, config.babel.server)
 		return transformed.code
 	}
 	
-	addHook(handleJSX, { exts: ['.js', '.jsx'] })
+	addHook(handleJSX, { exts: ['.js', '.jsx', '.svg'] })
 	addHook(handleNonJs, { exts: index.nonJsExtensions })
 	
 	watch([
@@ -25,7 +31,8 @@ const setupBabelSsr = (index) => {
 	], { recursive: true }, (evt, filename) => {
 		try {
 			if (filename && fs.statSync(filename).isFile()) {
-				delete require.cache[filename]
+				console.log('clearing caches')
+				Object.keys(require.cache).forEach(key => delete require.cache[key])
 			}
 		} catch (e) {
 			console.error(e)

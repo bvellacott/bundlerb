@@ -5,7 +5,7 @@ const BBError = require('./BBError')
 const { FsResolver } = require('./FsResolver')
 const { initJs } = require('./initJs')
 const { jsonLoader } = require('./jsonLoader')
-const { svgLoader } = require('./svgLoader')
+// const { svgLoader } = require('./svgLoader')
 const { postcssLoader } = require('./postcssLoader')
 const { jsLoader } = require('./jsLoader')
 const { jsTranspilerLoader } = require('./jsTranspilerLoader')
@@ -19,12 +19,12 @@ const api = {
 
   buildIndex: (options = {}) => ({
     nonJsFiles: {},
-    nonJsExtensions: ['.scss', '.css', '.svg'],
+    nonJsExtensions: ['.scss', '.css'],
     resolvers: [ FsResolver(api, /.*/) ],
     loaders: [
       initJs,
       postcssLoader(api),
-      svgLoader,
+      // svgLoader,
       jsonLoader,
       jsLoader(api),
       jsTranspilerLoader,

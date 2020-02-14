@@ -1,6 +1,5 @@
 import { h } from 'preact'
 import render from 'preact-render-to-string';
-import './index.css';
 import App from './App';
 
 export default (req, res) => render(

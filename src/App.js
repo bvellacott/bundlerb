@@ -1,12 +1,14 @@
 import { h } from 'preact';
-// import Logo from './logo.svg';
-import './App.css';
+import Logo from './logo.svg';
+import './App.scss';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        {/* <Logo /> */}
+        {/* <div className="App-logo">
+          <Logo />
+        </div> */}
         <img src="/src/logo.svg" className="App-logo" alt="logo" />
         <p>
           Edit <code>src/App.js</code> and save to reload.
