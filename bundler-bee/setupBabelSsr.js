@@ -2,6 +2,7 @@ const { addHook } = require('pirates')
 const watch = require('node-watch')
 const fs = require('fs')
 const babel = require('@babel/core')
+const BBError = require('./BBError')
 const { requireConfig } = require('./utils')
 
 const setupBabelSsr = (index) => {
@@ -11,8 +12,8 @@ const setupBabelSsr = (index) => {
 		index.nonJsFiles[filename] = contents
 		return ''
 	}
-	
-	const handleJSX = (contents, filename) => {
+
+	const handleJsx = (contents, filename) => {
 		if (filename.endsWith('.svg')) {
 			contents = `
 import { h } from 'preact'
@@ -23,21 +24,45 @@ export default () => ${contents.replace(/\n/g, '')}
 		return transformed.code
 	}
 	
-	addHook(handleJSX, { exts: ['.js', '.jsx', '.svg'] })
+	addHook(handleJsx, { exts: ['.js', '.jsx', '.svg'] })
 	addHook(handleNonJs, { exts: index.nonJsExtensions })
 	
 	watch([
 		process.cwd(),
 	], { recursive: true }, (evt, filename) => {
 		try {
-			if (filename && fs.statSync(filename).isFile()) {
-				console.log('clearing caches')
-				Object.keys(require.cache).forEach(key => delete require.cache[key])
+			if (filename && fs.statSync(filename).isFile() && require.cache[filename]) {
+				console.log(`clearing ${filename} from cache`)
+				try {
+					module = require.cache[filename]
+					require.cache[filename] = {}
+					clearParentsFromCache(require.cache, [module])
+				} catch (e) {
+					throw new BBError(`failed to clear parent modules from cache for: ${filename}`, e)
+				}
+				delete require.cache[filename]
 			}
 		} catch (e) {
 			console.error(e)
 		}
 	});
 }
+
+const clearParentsFromCache = (cache, modules) => {
+	const parents = getParentsFromCache(cache, modules)
+	if (parents.length) {
+		parents.forEach(({ filename }) => {
+			console.log(`clearing ${filename} from cache`)
+			delete require.cache[filename]
+		})
+		clearParentsFromCache(cache, parents)
+	}
+}
+
+const getParentsFromCache = (cache, modules) =>
+	Object.values(cache)
+		.filter(({ children = [] }) => modules
+			.some(({ filename }) => children
+				.find(({ filename: childFilename }) => childFilename === filename)))
 
 exports.setupBabelSsr = setupBabelSsr

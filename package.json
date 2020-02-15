@@ -4,12 +4,8 @@
   "description": "bundles on the fly",
   "main": "index.js",
   "scripts": {
-    "start": "node server/index.js",
-    "start:assets": "node asset-server/index.js",
-    "start:dev": "concurrently \"node server/index.js\" \"node asset-server/index.js\"",
-    "start:dev:debug": "concurrently \"node server/index.js\" \"node --inspect-brk asset-server/index.js\"",
-    "start:electron": "electron .",
-    "start:electron:debug": "electron --inspect-brk=6000 ."
+    "start": "node asset-server/index.js",
+    "start:debug": "node --inspect-brk asset-server/index.js"
   },
   "repository": {
     "type": "git",

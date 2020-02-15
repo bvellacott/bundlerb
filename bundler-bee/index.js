@@ -5,7 +5,6 @@ const BBError = require('./BBError')
 const { FsResolver } = require('./FsResolver')
 const { initJs } = require('./initJs')
 const { jsonLoader } = require('./jsonLoader')
-// const { svgLoader } = require('./svgLoader')
 const { postcssLoader } = require('./postcssLoader')
 const { jsLoader } = require('./jsLoader')
 const { jsTranspilerLoader } = require('./jsTranspilerLoader')
@@ -24,7 +23,6 @@ const api = {
     loaders: [
       initJs,
       postcssLoader(api),
-      // svgLoader,
       jsonLoader,
       jsLoader(api),
       jsTranspilerLoader,
@@ -202,7 +200,6 @@ const api = {
     try {
       const requestIndex = {...index, priorIdsString, loadStyles: !!loadStyles, req, res }
       const module = await api.resolveRootModule(modulePath, requestIndex, true)
-      console.log('resolved without error')
       res.setHeader('moduleId', module.id)
       res.setHeader('allIds', JSON.stringify(requestIndex.modulesArray.map(module => module.id)))
       await api.concatenate(module, requestIndex, priorIdsString, res)

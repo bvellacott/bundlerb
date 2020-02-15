@@ -1,5 +1,6 @@
 import { h } from 'preact';
 import Logo from './logo.svg';
+import { Paragraph } from './Paragraph'
 import './App.scss';
 
 function App() {
@@ -10,9 +11,7 @@ function App() {
           <Logo />
         </div> */}
         <img src="/src/logo.svg" className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
+        <Paragraph />
         <a
           className="App-link"
           href="https://reactjs.org"
