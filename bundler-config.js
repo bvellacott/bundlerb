@@ -19,6 +19,10 @@ module.exports = {
       // runs after all dependecies are resolved
       // these should perform all necessary transformations
       // for the browser
+      presets: process.env.NODE_ENV === 'prod' ? [
+        '@babel/preset-env',
+        'minify',
+      ] : undefined,
       plugins: [
         '@babel/plugin-transform-classes',
         ['@babel/plugin-transform-modules-amd'],
