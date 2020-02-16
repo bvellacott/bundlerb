@@ -1,7 +1,8 @@
 const postcssNested = require('postcss-nested')
+const cssnano = require('cssnano')
 const postcssCustomProperties = require('postcss-custom-properties')
 
-const addMissingExport = require('./bundler-bee/babel-plugins/transform-add-missing-exports-to-amd')
+const addMissingExport = require('./bundler-bee/babel-plugins/transform-add-missing-exports-to-amd').default
 
 
 module.exports = {
@@ -38,10 +39,13 @@ module.exports = {
       postcssNested,
       postcssCustomProperties({
         importFrom: [
-          './bundler-bee/postcssCustomProperties/colors.css',
+          './postcssCustomProperties/colors.css',
         ],
         preserve: false,
       }),
-    ],
+      process.env.NODE_ENV === 'prod' ? cssnano({
+        preset: 'default',
+      }) : undefined,
+    ].filter(plugin => plugin),
   },
 }

@@ -1,12 +1,9 @@
-import { dirname } from "path";
-import resolve from 'resolve';
-import nodeLibs from 'node-libs-browser';
-import {
+const {
   identifier,
   stringLiteral,
-} from "@babel/types";
+} = require('@babel/types')
 
-export const TransformImportsToCommonRoot = (module = {}, aliases = {}) => {
+const TransformImportsToCommonRoot = (module = {}, aliases = {}) => {
   return function() {
     function isValidDefineCall(nodepath) {
       if (!nodepath.isCallExpression()) return false;
@@ -88,4 +85,6 @@ export const TransformImportsToCommonRoot = (module = {}, aliases = {}) => {
   };
 };
 
-export default TransformImportsToCommonRoot();
+exports.TransformImportsToCommonRoot = TransformImportsToCommonRoot
+
+exports.default = TransformImportsToCommonRoot();

@@ -1,6 +1,7 @@
+const fs = require('fs')
+const { join } = require('path')
 const { addHook } = require('pirates')
 const watch = require('node-watch')
-const fs = require('fs')
 const babel = require('@babel/core')
 const BBError = require('./BBError')
 const { requireConfig } = require('./utils')
@@ -28,7 +29,7 @@ export default () => ${contents.replace(/\n/g, '')}
 	addHook(handleNonJs, { exts: index.nonJsExtensions })
 	
 	watch([
-		process.cwd(),
+		join(process.cwd(), 'src'),
 	], { recursive: true }, (evt, filename) => {
 		try {
 			if (filename && fs.statSync(filename).isFile() && require.cache[filename]) {

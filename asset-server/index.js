@@ -32,12 +32,19 @@ const transformAlias = (path) => {
   }
   return path;
 }
-app.get(['/*.jsx'], (req, res, next) => {
-  const modulePath = join(process.cwd(), transformAlias(req.path))
+
+const ssrJsx = (relativeModulePath, req, res) => {
+  const modulePath = join(process.cwd(), transformAlias(relativeModulePath))
   const render = require(modulePath).default
   res.setHeader('Content-Type', 'text/html;charset=UTF-8')
   res.send(render(req, res))
-})
+}
+
+app.get([
+  '/aapp.html',
+  '/aapp/bapp.html',
+], (req, res, next) => ssrJsx('/src/index.jsx', req, res, next))
+app.get(['/*.jsx'], ssrJsx)
 app.get(['/*.js', '/*.js.map', '/*.mjs', '/*.mjs.map', '/*.scss', '/*.scss.map', '/*.css', '/*.css.map'],
   (req, res, next) => {
     req.modulePath = transformAlias(req.path)

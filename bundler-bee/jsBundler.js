@@ -4,11 +4,13 @@ const jsBundler = {
   matcher: /\.js$|\.mjs$/,
   bundle: (module, flattenedWithoutPrior, index, concat) => {
     const flattenedWithoutPriorReversed = flattenedWithoutPrior.reverse()
-    concat.add(null, `window.define.priorIds.push(${module.id});`)
-    if (index.loadStyles) {
-      concat.add(null,
-        `(function() { var e = document.createElement('link'); e.setAttribute('href', '${module.path.replace(/\.js$/, '.jscss')}'); e.setAttribute('rel', 'preload'); e.setAttribute('as', 'style'); e.setAttribute('onload', "this.rel='stylesheet'"); document.getElementsByTagName('head')[0].appendChild(e); })()`
-      )
+    if (index.supportAsyncRequire) {
+      concat.add(null, `window.define.priorIds.push(${module.id});`)
+      if (index.loadStyles) {
+        concat.add(null,
+          `(function() { var e = document.createElement('link'); e.setAttribute('href', '${module.path.replace(/\.js$/, '.jscss')}'); e.setAttribute('rel', 'preload'); e.setAttribute('as', 'style'); e.setAttribute('onload', "this.rel='stylesheet'"); document.getElementsByTagName('head')[0].appendChild(e); })()`
+        )
+      }
     }
     for (let i = 0; i < flattenedWithoutPriorReversed.length; i++) {
       const { path, sourceMapFilename, js } = flattenedWithoutPriorReversed[i]

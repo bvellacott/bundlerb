@@ -1,15 +1,7 @@
-import { relative, dirname, join } from "path";
-import resolve from 'resolve';
-import nodeLibs from 'node-libs-browser';
-import {
-  isModule,
-  rewriteModuleStatementsAndPrepareHeader,
-  hasExports,
-} from '@babel/helper-module-transforms';
-import {
-  types,
-} from '@babel/core';
-// import normalizeAndLoadMetadata from 'babel-helper-module-transforms/normalize-and-load-metadata';
+const { relative, dirname, join } = require('path')
+const resolve = require('resolve')
+const nodeLibs = require('node-libs-browser') // this is to mock the node libraries for the browser
+const { isModule } = require('@babel/helper-module-transforms')
 
 const packageFilter = pkg => ({
   ...pkg,
@@ -27,7 +19,6 @@ const requireToPath = (req, filedir, basedir, aliases) =>
 
 const transformAlias = (path, basedir, aliases) => {
   if (nodeLibs[path]) {
-    console.log('!!! found: ', path, '-', nodeLibs[path],' !!!')
     return nodeLibs[path]
   }
   for (let i = 0; i < aliases.length; i++) {
@@ -40,7 +31,7 @@ const transformAlias = (path, basedir, aliases) => {
   return path;
 }
 
-export const TransformImportsToCommonRoot = (module = {}, aliases = {}) => {
+const TransformImportsToCommonRoot = (module = {}, aliases = {}) => {
   aliases = Object.keys(aliases || {}).map(alias => ({
     aliasedPath: aliases[alias],
     regex: new RegExp(`^${alias}`),
@@ -108,4 +99,6 @@ const getEs6Imports = (path, filedir, basedir, aliases) => {
     })
 }
 
-export default TransformImportsToCommonRoot();
+exports.TransformImportsToCommonRoot = TransformImportsToCommonRoot
+
+exports.default = TransformImportsToCommonRoot()

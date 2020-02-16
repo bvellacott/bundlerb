@@ -4,8 +4,9 @@
   "description": "bundles on the fly",
   "main": "index.js",
   "scripts": {
-    "start": "node asset-server/index.js",
-    "start:debug": "node --inspect-brk asset-server/index.js"
+    "start": "NODE_ENV=dev node asset-server/index.js",
+    "start:debug": "NODE_ENV=dev node --inspect-brk asset-server/index.js",
+    "start:prod": "NODE_ENV=prod node asset-server/index.js"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,11 @@
     "url": "https://github.com/bvellacott/bundler-bee/issues"
   },
   "homepage": "https://github.com/bvellacott/bundler-bee#readme",
+  "browserslist": [
+    "defaults",
+    "not IE 11",
+    "not IE_Mob 11"
+  ],
   "dependencies": {
     "@babel/core": "^7.8.4",
     "@babel/plugin-proposal-class-properties": "^7.8.3",
@@ -36,7 +42,10 @@
     "@babel/plugin-transform-modules-amd": "^7.8.3",
     "@babel/plugin-transform-modules-commonjs": "^7.8.3",
     "@babel/plugin-transform-react-jsx": "^7.8.3",
+    "@babel/preset-env": "^7.8.4",
+    "babel-preset-minify": "^0.5.1",
     "concat-with-sourcemaps": "^1.1.0",
+    "cssnano": "^4.1.10",
     "express": "^4.17.1",
     "node-libs-browser": "^2.2.1",
     "node-watch": "^0.6.3",

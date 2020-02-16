@@ -1,9 +1,10 @@
 import { h } from 'preact';
-import Logo from './logo.svg';
+// import Logo from './logo.svg';
 import { Paragraph } from './Paragraph'
 import './App.scss';
 
-function App() {
+function App({ path }) {
+  const href = path === '/aapp.html' ? '/aapp/bapp.html' : '/aapp.html'
   return (
     <div className="App">
       <header className="App-header">
@@ -12,14 +13,7 @@ function App() {
         </div> */}
         <img src="/src/logo.svg" className="App-logo" alt="logo" />
         <Paragraph />
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <a className="App-link" href={href}>{href}</a>
       </header>
     </div>
   );
