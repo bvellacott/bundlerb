@@ -18,3 +18,4 @@ npm run start:prod
 
 ./build.sh
 ```
+^^^ youll need `wget` installed
