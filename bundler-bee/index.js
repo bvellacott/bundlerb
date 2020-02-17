@@ -96,7 +96,7 @@ const api = {
         index.modulesByPath[modulePath] = module
         index.modulesArray.push(module)
         module.id = index.modulesArray.length - 1
-        module.commonRootTransform = TransformImportsToCommonRoot(module, index.aliases) // TODO: move to js loader
+        module.commonRootTransform = TransformImportsToCommonRoot(module)
       } else if (module.resolvingPromise) {
         return module.resolvingPromise
       }

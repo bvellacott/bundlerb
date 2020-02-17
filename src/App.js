@@ -1,6 +1,6 @@
 import { h } from 'preact';
 // import Logo from './logo.svg';
-import { Paragraph } from './Paragraph'
+import { Paragraph } from '@/components/Paragraph'
 import './App.scss';
 
 function App({ path }) {
@@ -20,3 +20,4 @@ function App({ path }) {
 }
 
 export default App;
+

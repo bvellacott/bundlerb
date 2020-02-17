@@ -2,41 +2,30 @@ const { relative, dirname, join } = require('path')
 const resolve = require('resolve')
 const nodeLibs = require('node-libs-browser') // this is to mock the node libraries for the browser
 const { isModule } = require('@babel/helper-module-transforms')
+const { transformAlias } = require('../../aliases')
 
 const packageFilter = pkg => ({
   ...pkg,
   main: pkg.module || pkg.main,
 })
 
-const requireToPath = (req, filedir, basedir, aliases) =>
+const requireToPath = (req, filedir, basedir) =>
   relative(
     basedir,
     resolve.sync(
-      transformAlias(req, basedir, aliases),
+      resolveAlias(req, basedir),
       { basedir: filedir, packageFilter },
     ),
   )
 
-const transformAlias = (path, basedir, aliases) => {
+const resolveAlias = (path, basedir) => {
   if (nodeLibs[path]) {
     return nodeLibs[path]
   }
-  for (let i = 0; i < aliases.length; i++) {
-    const { regex, aliasedPath } = aliases[i];
-    if (regex.test(path)) {
-      const noAlias = path.replace(regex, '')
-      return join(basedir, aliasedPath, noAlias)
-    }
-  }
-  return path;
+  return transformAlias(path, basedir);
 }
 
-const TransformImportsToCommonRoot = (module = {}, aliases = {}) => {
-  aliases = Object.keys(aliases || {}).map(alias => ({
-    aliasedPath: aliases[alias],
-    regex: new RegExp(`^${alias}`),
-  }))
-
+const TransformImportsToCommonRoot = (module = {}) => {
   return function() {
     function isValidRequireCall(nodepath) {
       if (!nodepath.isCallExpression()) return false;
@@ -58,7 +47,7 @@ const TransformImportsToCommonRoot = (module = {}, aliases = {}) => {
       CallExpression(nodepath) {
         if (!isValidRequireCall(nodepath)) return;
         const req = nodepath.node.arguments[0].value;
-        const newPath = requireToPath(req, filedir, basedir, aliases);
+        const newPath = requireToPath(req, filedir, basedir);
         nodepath.node.arguments[0].value = newPath;
         dependencyPaths.push(newPath);
       },
@@ -74,7 +63,7 @@ const TransformImportsToCommonRoot = (module = {}, aliases = {}) => {
             const filedir = dirname(filename);
             module.js = module.js || {};
             module.js.dependencyPaths = module.js.dependencyPaths || [];
-            const es6Imports = getEs6Imports(nodepath, filedir, cwd, aliases)
+            const es6Imports = getEs6Imports(nodepath, filedir, cwd)
             es6Imports.forEach(dep => module.js.dependencyPaths.push(dep))
             nodepath.traverse(
               AmdVisitor(filedir, cwd, module.js.dependencyPaths),

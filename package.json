@@ -4,9 +4,9 @@
   "description": "bundles on the fly",
   "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=dev node asset-server/index.js",
-    "start:debug": "NODE_ENV=dev node --inspect-brk asset-server/index.js",
-    "start:prod": "NODE_ENV=prod node asset-server/index.js"
+    "start": "NODE_ENV=dev node bundler-bee/asset-server/index.js",
+    "start:debug": "NODE_ENV=dev node --inspect-brk bundler-bee/asset-server/index.js",
+    "start:prod": "NODE_ENV=prod node bundler-bee/asset-server/index.js"
   },
   "repository": {
     "type": "git",
@@ -54,5 +54,8 @@
     "postcss-nested": "^4.2.1",
     "preact": "^10.3.1",
     "preact-render-to-string": "^5.1.4"
+  },
+  "moduleAliases": {
+    "@/components": "./src/components" 
   }
 }
