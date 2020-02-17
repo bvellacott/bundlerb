@@ -1,5 +1,7 @@
 # bundlerb
 
+## run dev
+
 ```bash
 clone
 
@@ -13,9 +15,7 @@ browse to http://localhost:4000/aapp.html
 ## build
 
 ```bash
-
 npm run start:prod
 
-./build.sh
+npm run build:static
 ```
-^^^ youll need `wget` installed
