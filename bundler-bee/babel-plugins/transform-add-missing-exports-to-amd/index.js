@@ -7,12 +7,11 @@ const TransformImportsToCommonRoot = (module = {}, aliases = {}) => {
   return function() {
     function isValidDefineCall(nodepath) {
       if (!nodepath.isCallExpression()) return false;
-      if (!nodepath.get("callee").isIdentifier({ name: "define" })) {
+      if (!nodepath.get('callee').isIdentifier({ name: 'define' })) {
         return false;
       }
-      // if (nodepath.scope.getBinding("require")) return false;
 
-      const args = nodepath.get("arguments");
+      const args = nodepath.get('arguments');
       if (args.length !== 3) return false;
 
       if (
@@ -28,8 +27,8 @@ const TransformImportsToCommonRoot = (module = {}, aliases = {}) => {
 
     function hasUnpassedExports(nodepath) {
       try {
-        const arrayExpression = nodepath.get("arguments")[1]
-        const functionExpression = nodepath.get("arguments")[2]
+        const arrayExpression = nodepath.get('arguments')[1]
+        const functionExpression = nodepath.get('arguments')[2]
         const elements = arrayExpression.get('elements')
         const params = functionExpression.get('params')
         for (let i = 0; i < params.length; i += 1) {
@@ -38,7 +37,7 @@ const TransformImportsToCommonRoot = (module = {}, aliases = {}) => {
             return false
           }
         }
-        const body = functionExpression.get("body").get("body")
+        const body = functionExpression.get('body').get('body')
         for (let i = 0; i < body.length; i += 1) {
           const child = body[i]
           if (

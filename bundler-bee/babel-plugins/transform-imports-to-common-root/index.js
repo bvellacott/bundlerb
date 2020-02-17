@@ -40,12 +40,12 @@ const TransformImportsToCommonRoot = (module = {}, aliases = {}) => {
   return function() {
     function isValidRequireCall(nodepath) {
       if (!nodepath.isCallExpression()) return false;
-      if (!nodepath.get("callee").isIdentifier({ name: "require" })) {
+      if (!nodepath.get('callee').isIdentifier({ name: 'require' })) {
         return false;
       }
-      if (nodepath.scope.getBinding("require")) return false;
+      if (nodepath.scope.getBinding('require')) return false;
 
-      const args = nodepath.get("arguments");
+      const args = nodepath.get('arguments');
       if (args.length !== 1) return false;
 
       const arg = args[0];
@@ -89,7 +89,7 @@ const TransformImportsToCommonRoot = (module = {}, aliases = {}) => {
 
 const getEs6Imports = (path, filedir, basedir, aliases) => {
   if (!isModule(path)) return [];
-  return path.get("body")
+  return path.get('body')
     .filter(child => 
       (child.isImportDeclaration() || child.isExportDeclaration()) && child.get('source').node)
     .map(child => {
