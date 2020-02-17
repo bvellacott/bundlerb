@@ -6,7 +6,7 @@ const addMissingExport = require('./bundlerb/babel-plugins/transform-add-missing
 
 
 module.exports = {
-  // loaded before bable.config.js
+  // loaded before babel.config.js
   babel: {
     // run before dependencies are resolved
     // ensures that babel is able to parse the files, but doesn't
@@ -31,7 +31,7 @@ module.exports = {
       sourceMaps: true
     },
     server: {
-      // 
+      // plugins to ensure ssr runs
       plugins: [
         '@babel/plugin-syntax-jsx',
         '@babel/plugin-transform-modules-commonjs',

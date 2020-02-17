@@ -1,16 +1,16 @@
 {
-  "name": "bundler-bee",
+  "name": "bundlerb",
   "version": "1.0.0",
   "description": "bundles on the fly",
   "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=dev node bundler-bee/asset-server/index.js",
-    "start:debug": "NODE_ENV=dev node --inspect-brk bundler-bee/asset-server/index.js",
-    "start:prod": "NODE_ENV=prod node bundler-bee/asset-server/index.js"
+    "start": "NODE_ENV=dev node bundlerb/asset-server/index.js",
+    "start:debug": "NODE_ENV=dev node --inspect-brk bundlerb/asset-server/index.js",
+    "start:prod": "NODE_ENV=prod node bundlerb/asset-server/index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bvellacott/bundler-bee.git"
+    "url": "git+https://github.com/bvellacott/bundlerb.git"
   },
   "keywords": [
     "bundle",
@@ -25,9 +25,9 @@
   "author": "Benjamin Vellacott",
   "license": "GPL-2.0-only",
   "bugs": {
-    "url": "https://github.com/bvellacott/bundler-bee/issues"
+    "url": "https://github.com/bvellacott/bundlerb/issues"
   },
-  "homepage": "https://github.com/bvellacott/bundler-bee#readme",
+  "homepage": "https://github.com/bvellacott/bundlerb#readme",
   "browserslist": [
     "defaults",
     "not IE 11",
