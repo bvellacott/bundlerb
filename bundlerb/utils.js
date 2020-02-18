@@ -16,7 +16,7 @@ const defaultConfig = {
 }
 
 // const relativeCwd = relative(__dirname, )
-const configPath = join(process.cwd(), 'bundler-config')
+const configPath = join(process.cwd(), 'bundlerb-config')
 const requireConfig = () => {
   try {
     const config = require(configPath) || {}
