@@ -1,5 +1,5 @@
 const fs = require('fs')
-const { join } = require('path')
+const { resolve } = require('path')
 const { addHook } = require('pirates')
 const watch = require('node-watch')
 const babel = require('@babel/core')
@@ -28,25 +28,28 @@ export default () => ${contents.replace(/\n/g, '')}
 	addHook(handleJsx, { exts: ['.js', '.jsx', '.svg'] })
 	addHook(handleNonJs, { exts: index.nonJsExtensions })
 	
-	watch([
-		join(process.cwd(), 'src'),
-	], { recursive: true }, (evt, filename) => {
-		try {
-			if (filename && fs.statSync(filename).isFile() && require.cache[filename]) {
-				console.log(`clearing ${filename} from cache`)
-				try {
-					module = require.cache[filename]
-					require.cache[filename] = {}
-					clearParentsFromCache(require.cache, [module])
-				} catch (e) {
-					throw new BBError(`failed to clear parent modules from cache for: ${filename}`, e)
+	watch(
+		(config.nodeWatchPaths || []).map(
+			path => resolve(process.cwd(), path)
+		),
+		config.nodeWatch,
+		(evt, filename) => {
+			try {
+				if (filename && fs.statSync(filename).isFile() && require.cache[filename]) {
+					console.log(`clearing ${filename} from cache`)
+					try {
+						module = require.cache[filename]
+						require.cache[filename] = {}
+						clearParentsFromCache(require.cache, [module])
+					} catch (e) {
+						throw new BBError(`failed to clear parent modules from cache for: ${filename}`, e)
+					}
+					delete require.cache[filename]
 				}
-				delete require.cache[filename]
+			} catch (e) {
+				console.error(e)
 			}
-		} catch (e) {
-			console.error(e)
-		}
-	});
+		});
 }
 
 const clearParentsFromCache = (cache, modules) => {

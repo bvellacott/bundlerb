@@ -52,4 +52,10 @@ module.exports = {
       }) : undefined,
     ].filter(plugin => plugin),
   },
+  nodeWatch: {
+    reqursive: true,
+  },
+  nodeWatchPaths: [
+    'src',
+  ],
 }
