@@ -26,10 +26,10 @@ const ssrJsx = (relativeModulePath, req, res) => {
   res.send(render(req, res))
 }
 
-app.get([
-  '/aapp.html',
-  '/aapp/bapp.html',
-], (req, res, next) => ssrJsx('/src/index.jsx', req, res, next))
+app.get(
+  config.ssrPaths || [],
+  (req, res, next) => ssrJsx('/src/index.jsx', req, res, next),
+)
 app.get(['/*.jsx'], ssrJsx)
 app.get(['/*.js', '/*.js.map', '/*.mjs', '/*.mjs.map', '/*.scss', '/*.scss.map', '/*.css', '/*.css.map'],
   (req, res, next) => {

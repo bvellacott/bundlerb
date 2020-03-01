@@ -58,4 +58,8 @@ module.exports = {
   nodeWatchPaths: [
     'src',
   ],
+  ssrPaths: [
+    '/aapp.html',
+    '/aapp/bapp.html',
+  ],
 }

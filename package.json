@@ -59,9 +59,5 @@
   },
   "moduleAliases": {
     "@/components": "./src/components"
-  },
-  "ssrPaths": [
-    "/aapp.html",
-    "/aapp/bapp.html"
-  ]
+  }
 }
