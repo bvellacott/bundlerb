@@ -1,11 +1,10 @@
-const { setupAliases } = require('../aliases')
-setupAliases()
+require('bueno-repo').setupAliases()
 
 const { join } = require('path')
 const express = require('express')
 const { setupBabelSsr } = require('../setupBabelSsr')
-const { requireConfig } = require('../utils')
 const { buildIndex, bundlerBee } = require('..')
+const { requireConfig } = require('../utils')
 
 const config = requireConfig()
 
@@ -26,10 +25,22 @@ const ssrJsx = (relativeModulePath, req, res) => {
   res.send(render(req, res))
 }
 
-app.get(
-  config.ssrPaths || [],
-  (req, res, next) => ssrJsx('/src/index.jsx', req, res, next),
-)
+app.get('*', (req, res, next) => {
+  console.log('CALLING:', req.path)
+  next()
+})
+config.discardPaths && app.get(config.discardPaths, (req, res, next) => {
+  res.setHeader('Content-Type', 'text/plain;charset=UTF-8')
+  res.send('')
+  console.log('DISCARDED:', req.path)
+})
+app.use(express.static('static'))
+if (config.ssrIndex) {
+  app.get(
+    config.ssrPaths || [],
+    (req, res, next) => ssrJsx(config.ssrIndex, req, res, next),
+  )
+}
 app.get(['/*.jsx'], ssrJsx)
 app.get(['/*.js', '/*.js.map', '/*.mjs', '/*.mjs.map', '/*.scss', '/*.scss.map', '/*.css', '/*.css.map'],
   (req, res, next) => {

@@ -4,7 +4,7 @@ const cssBundler = {
   matcher: /\.css$|.scss$/,
   bundle: (module, flattenedWithoutPrior, index, concat) => {
     flattenedWithoutPrior.forEach(({ sourceMapFilename, css: { result: { css, map }}}) =>
-      concat.add(sourceMapFilename, css, index.sourcemaps && map ? map.toString() : undefined))
+        concat.add(sourceMapFilename, css, index.sourcemaps && map ? map.toString() : undefined))
     module.css = module.css || { result: {} }
     module.css.result.concat = concat
     if (index.sourcemaps) {

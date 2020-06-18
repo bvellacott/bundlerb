@@ -3,7 +3,6 @@ const { basename } = require('path')
 const jsBundler = {
   matcher: /\.js$|\.mjs$/,
   bundle: (module, flattenedWithoutPrior, index, concat) => {
-    const flattenedWithoutPriorReversed = flattenedWithoutPrior.reverse()
     if (index.supportAsyncRequire) {
       concat.add(null, `window.define.priorIds.push(${module.id});`)
       if (index.loadStyles) {
@@ -12,8 +11,9 @@ const jsBundler = {
         )
       }
     }
-    for (let i = 0; i < flattenedWithoutPriorReversed.length; i++) {
-      const { path, sourceMapFilename, js } = flattenedWithoutPriorReversed[i]
+    concat.add(null, `window.define.suspend && window.define.suspend();`)
+    for (let i = 0; i < flattenedWithoutPrior.length; i++) {
+      const { path, sourceMapFilename, js } = flattenedWithoutPrior[i]
       if (!js) {
         throw new Error(`the module '${path} has no js target'`)
       } else if (!js.result) {
@@ -24,8 +24,7 @@ const jsBundler = {
       const { result: { code, map }} = js
       concat.add(sourceMapFilename, code, index.sourcemaps ? map : undefined)
     }
-    module.js = module.js || { result: {} }
-    module.js.result.concat = concat
+    concat.add(null, `window.define.resume && window.define.resume();`)
     if (index.sourcemaps) {
       concat.add(null,
         `//# sourceMappingURL=${basename(module.path)}${index.mapFileSuffix}${index.priorIdsString ?
@@ -33,6 +32,8 @@ const jsBundler = {
           ''}`
       )
     }
+    module.js = module.js || { result: {} }
+    module.js.result.concat = concat
   },
   invalidate: (module) => delete module.js,
   hasCachedResult: module => !!module.js

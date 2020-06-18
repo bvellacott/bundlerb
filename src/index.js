@@ -2,4 +2,4 @@ import { h, render } from 'preact'
 import App from './App';
 import './index.scss';
 
-render(<App />, document.body);
+render(<App path={location.pathname} />, document.body);

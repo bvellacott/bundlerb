@@ -2,8 +2,7 @@ const postcssNested = require('postcss-nested')
 const cssnano = require('cssnano')
 const postcssCustomProperties = require('postcss-custom-properties')
 
-const addMissingExport = require('./bundlerb/babel-plugins/transform-add-missing-exports-to-amd').default
-
+const addMissingRequireMisc = require('./bundlerb/babel-plugins/transform-add-missing-require-misc-to-amd').default
 
 module.exports = {
   // loaded before babel.config.js
@@ -26,7 +25,7 @@ module.exports = {
       plugins: [
         '@babel/plugin-transform-classes',
         ['@babel/plugin-transform-modules-amd'],
-        addMissingExport,
+        addMissingRequireMisc,
       ],
       sourceMaps: true
     },
@@ -43,7 +42,7 @@ module.exports = {
       postcssNested,
       postcssCustomProperties({
         importFrom: [
-          './postcssCustomProperties/colors.css',
+          './postcssCustomProperties/constants.css',
         ],
         preserve: false,
       }),
@@ -58,6 +57,7 @@ module.exports = {
   nodeWatchPaths: [
     'src',
   ],
+  ssrIndex: '/src/index.jsx',
   ssrPaths: [
     '/aapp.html',
     '/aapp/bapp.html',
