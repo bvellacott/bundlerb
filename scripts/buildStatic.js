@@ -6,7 +6,7 @@ if (!shell.which('wget')) {
   shell.exit(1);
 }
 
-shell.echo('! remember to start the prod server before building !')
+shell.echo('! remember to start the production server before building !')
 
 shell.rm('-rf', 'dist')
 shell.mkdir('dist')

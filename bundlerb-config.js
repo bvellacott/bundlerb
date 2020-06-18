@@ -4,6 +4,16 @@ const postcssCustomProperties = require('postcss-custom-properties')
 
 const addMissingRequireMisc = require('./bundlerb/babel-plugins/transform-add-missing-require-misc-to-amd').default
 
+const isProd = process.env.NODE_ENV === 'production'
+
+const jsxPluginConfig = [
+  '@babel/plugin-transform-react-jsx', {
+    pragma: 'h',
+    pragmaFrag: 'Fragment',
+    throwIfNamespace: false,
+  },
+]
+
 module.exports = {
   // loaded before babel.config.js
   babel: {
@@ -12,27 +22,36 @@ module.exports = {
     // need to perform any transformations
     clientSyntaxPlugins: [
       '@babel/plugin-syntax-jsx',
-      '@babel/plugin-proposal-class-properties',
     ],
     client: {
       // runs after all dependecies are resolved
       // these should perform all necessary transformations
       // for the browser
-      presets: process.env.NODE_ENV === 'prod' ? [
-        '@babel/preset-env',
-        'minify',
-      ] : undefined,
-      plugins: [
-        '@babel/plugin-transform-classes',
-        ['@babel/plugin-transform-modules-amd'],
-        addMissingRequireMisc,
+      // ... understanding plugin and preset ordering is essential here
+      presets: [
+        {
+          plugins: [
+            jsxPluginConfig,
+            '@babel/plugin-transform-classes',
+            '@babel/plugin-transform-destructuring',
+            addMissingRequireMisc,
+          ],
+        }, [
+          '@babel/preset-env', {
+            modules: 'amd',
+          },
+        ], 
       ],
-      sourceMaps: true
+      sourceMaps: true,
+      minified: isProd,
+      compact: isProd,
+      comments: !isProd,
+      retainLines: !isProd,
     },
     server: {
       // plugins to ensure ssr runs
       plugins: [
-        '@babel/plugin-syntax-jsx',
+        jsxPluginConfig,
         '@babel/plugin-transform-modules-commonjs',
       ],
     },
@@ -46,11 +65,12 @@ module.exports = {
         ],
         preserve: false,
       }),
-      process.env.NODE_ENV === 'prod' ? cssnano({
+      process.env.NODE_ENV === 'production' ? cssnano({
         preset: 'default',
       }) : undefined,
     ].filter(plugin => plugin),
   },
+
   nodeWatch: {
     reqursive: true,
   },

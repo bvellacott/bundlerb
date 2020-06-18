@@ -9,9 +9,10 @@ const jsCssBundler = {
       concat.add(sourceMapFilename, css, index.sourcemaps && map ? map.toString() : undefined))
     module.jsCss = module.jsCss || { result: {} }
     module.jsCss.result.concat = concat
+    const filename = basename(module.path).replace(/\.js$/, '.jscss')
     if (index.sourcemaps) {
       concat.add(null,
-        `/*# sourceMappingURL=${basename(module.path)}${index.mapFileSuffix}${index.priorIdsString ?
+        `/*# sourceMappingURL=${filename}${index.mapFileSuffix}${index.priorIdsString ?
           `?priorIds=${index.priorIdsString} */` :
           ' */'}`
       )

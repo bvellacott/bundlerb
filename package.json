@@ -4,9 +4,9 @@
   "description": "bundles on the fly",
   "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=dev node bundlerb/asset-server/index.js",
-    "start:debug": "NODE_ENV=dev node --inspect-brk bundlerb/asset-server/index.js",
-    "start:prod": "NODE_ENV=prod node bundlerb/asset-server/index.js",
+    "start": "NODE_ENV=development node bundlerb/asset-server/index.js",
+    "start:debug": "NODE_ENV=development node --inspect-brk bundlerb/asset-server/index.js",
+    "start:prod": "NODE_ENV=production node bundlerb/asset-server/index.js",
     "build:static": "node ./scripts/buildStatic.js"
   },
   "repository": {
