@@ -56,9 +56,10 @@
     "postcss-nested": "4.2.1",
     "preact": "10.3.1",
     "preact-render-to-string": "5.1.4",
+    "redux-zero": "^5.1.6",
     "shelljs": "0.8.3"
   },
   "moduleAliases": {
-    "@/components": "./src/components"
+    "^@/": "./src/"
   }
 }

@@ -1,11 +1,11 @@
 import { h } from 'preact'
 import render from 'preact-render-to-string';
-import App from './App';
+import App from '@/components/App';
 
 export default (req, res) => render(
   <html>
   <head>
-    <title>Aapp</title>
+    <title>BundlerB</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <link rel="stylesheet" href="/src/index.jscss" />
   </head>

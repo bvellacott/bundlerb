@@ -1,0 +1,11 @@
+.toolgrid {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+
+  &__item {
+    flex-basis: 37.5rem;
+    padding: 0 1.0rem 2.0rem 1.0rem;
+  }
+}
+

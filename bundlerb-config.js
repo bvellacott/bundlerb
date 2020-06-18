@@ -72,14 +72,15 @@ module.exports = {
   },
 
   nodeWatch: {
-    reqursive: true,
+    recursive: true,
   },
   nodeWatchPaths: [
     'src',
   ],
   ssrIndex: '/src/index.jsx',
   ssrPaths: [
-    '/aapp.html',
-    '/aapp/bapp.html',
+    '/index.html',
+    '/subroute/index.html',
+    '/404.html',
   ],
 }
