@@ -1,0 +1,19 @@
+.big-logo {
+  @media only screen and (max-width: 768px) {
+    width: 75%;
+  }
+
+  @media only screen and (min-width: 768px) {
+    width: 50rem;
+  }
+
+  @media only screen and (min-width: 1200px) {
+    width: 55rem;
+  }
+
+  &__wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+}

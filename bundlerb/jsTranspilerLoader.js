@@ -39,7 +39,7 @@ const transpileJs = (module, index) => new Promise((resolve, reject) => {
 })
 
 const jsTranspilerLoader = {
-  matcher: /\.js$|\.mjs$|.css$|.svg$|.json$|.scss$/,
+  matcher: /\.js$|\.mjs$|.css$|.json$|.scss$/,
   load: transpileJs,
 }
 

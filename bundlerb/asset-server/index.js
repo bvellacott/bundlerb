@@ -37,7 +37,7 @@ config.discardPaths && app.get(config.discardPaths, (req, res, next) => {
 app.use(express.static('static'))
 if (config.ssrIndex) {
   app.get(
-    config.ssrPaths || [],
+    [...(config.ssrPaths || []), '/*.html'],
     (req, res, next) => ssrJsx(config.ssrIndex, req, res, next),
   )
 }
@@ -59,14 +59,6 @@ app.get(['/*.js.map', '/*.mjs.map'], (req, res) => {
   res.setHeader('Content-Type', 'application/json;charset=UTF-8')
   res.send(req.module.js.result.concat.sourceMap)
 })
-app.get('/*.scss', (req, res) => {
-  res.setHeader('Content-Type', 'text/css;charset=UTF-8')
-  res.send(req.module.css.result.concat.content)
-})
-app.get('/*.css', (req, res) => {
-  res.setHeader('Content-Type', 'text/css;charset=UTF-8')
-  res.send(req.module.css.result.concat.content)
-})
 app.get('/*.jscss', (req, res) => {
   res.setHeader('Content-Type', 'text/css;charset=UTF-8')
   res.send(req.module.jsCss.result.concat.content)
@@ -75,11 +67,11 @@ app.get('/*.jscss.map', (req, res) => {
   res.setHeader('Content-Type', 'text/css;charset=UTF-8')
   res.send(req.module.jsCss.result.concat.sourceMap)
 })
-app.get('/*.scss.map', (req, res) => {
-  res.setHeader('Content-Type', 'application/json;charset=UTF-8')
-  res.send(req.module.css.result.concat.sourceMap)
+app.get(['/*.scss', '/*.css'], (req, res) => {
+  res.setHeader('Content-Type', 'text/css;charset=UTF-8')
+  res.send(req.module.css.result.concat.content)
 })
-app.get('/*.css.map', (req, res) => {
+app.get(['/*.scss.map', '/*.css.map'], (req, res) => {
   res.setHeader('Content-Type', 'application/json;charset=UTF-8')
   res.send(req.module.css.result.concat.sourceMap)
 })

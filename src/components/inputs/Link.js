@@ -11,6 +11,11 @@ const actions = (store) => ({
   navigate: createNavigateAction(store),
 })
 
-export const Link = connect(null, actions)(({ href, navigate, ...props }) => (
-  <a onClick={(e) => onClick(e, navigate, href)} {...props} />
+export const Link = connect(null, actions)(({ className, href, navigate, children }) => (
+  <a
+    className={className}
+    href={href}
+    onClick={(e) => onClick(e, navigate, href)}
+    children={children}
+  />
 ))

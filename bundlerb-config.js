@@ -31,10 +31,10 @@ module.exports = {
       presets: [
         {
           plugins: [
+            addMissingRequireMisc,
             jsxPluginConfig,
             '@babel/plugin-transform-classes',
             '@babel/plugin-transform-destructuring',
-            addMissingRequireMisc,
           ],
         }, [
           '@babel/preset-env', {
@@ -72,15 +72,22 @@ module.exports = {
   },
 
   nodeWatch: {
+    // this configures file watching for ssr
     recursive: true,
   },
   nodeWatchPaths: [
+    // this configures which paths are watched for ssr
     'src',
-  ],
-  ssrIndex: '/src/index.jsx',
+  ], 
+  ssrIndex: '/src/index.jsx', // which file is used to render ssr
+  // entry file names for ssr - by default *.html files are ssr'ed if the ssrIndex is setup
+  // but if the file doesn't end .html or the you want to create a static file build by
+  // running `npm run build:static`, you need to specify the path in the array below
   ssrPaths: [
     '/index.html',
-    '/subroute/index.html',
+    '/introduction.html',
+    '/approach.html',
+    '/finally.html',
     '/404.html',
   ],
 }

@@ -4,7 +4,7 @@ import { connect } from 'redux-zero/devtools'
 import { getLocation } from '@/utils/globals'
 
 export const createInitialState = () => ({
-  location: new URL(getLocation().toString()),
+  location: getLocation(),
 })
 
 export const configureStore = () => {

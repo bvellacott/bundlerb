@@ -37,7 +37,7 @@ const loadJsDependencies = api => (module, index) => new Promise((resolve, rejec
 })
 
 const jsLoader = api => ({
-  matcher: /\.js$|\.mjs$.css$|.scss$.svg$.json$/,
+  matcher: /\.js$|\.mjs$.css$|.scss$.json$/,
   load: loadJsDependencies(api),
 })
 

@@ -20,18 +20,12 @@ const setupBabelSsr = (index) => {
 			return contents
 		}
 
-		if (filename.endsWith('.svg')) {
-			contents = `
-import { h } from 'preact'
-export default () => ${contents.replace(/\n/g, '')}
-`
-		}
 		const transformed = babel.transformSync(contents, config.babel.server)
 		return transformed.code
 	}
 	
 	addHook(handleJsx, {
-		exts: ['.js', '.jsx', '.svg'],
+		exts: ['.js', '.jsx'],
 		ignoreNodeModules: false,
 	})
 	addHook(handleNonJs, {

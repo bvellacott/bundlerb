@@ -4,7 +4,7 @@ export const getWindow = () => _window
 
 export const getDocument = () => getWindow().document || {}
 
-export const getLocation = () => getDocument().location || new URL('/')
+export const getLocation = () => getDocument().location || {}
 
 export const getHistory = () => getWindow().history || {
   back: () => {},
