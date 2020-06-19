@@ -22,7 +22,7 @@ export const Finally = () => (
     </main>
     <footer>
       <Toolgrid>
-        <Link href="/approach.html" ><button>{'Approach'}</button></Link>
+        <Link href="/approach.html" ><button>{'On the B'}</button></Link>
         <Link href="/index.html" ><button>{'Home'}</button></Link>
       </Toolgrid>
       <BigLogo src="/bundlerb_mirror.gif" />
