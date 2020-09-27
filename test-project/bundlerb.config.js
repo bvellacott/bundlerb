@@ -3,6 +3,7 @@ const cssnano = require('cssnano')
 const postcssCustomProperties = require('postcss-custom-properties')
 
 const addMissingRequireMisc = require('bundlerb/babel-plugins/transform-add-missing-require-misc-to-amd').default
+const transformPackFilepaths = require('bundlerb/babel-plugins/transform-pack-filepaths').default
 
 const isProd = process.env.NODE_ENV === 'production'
 
@@ -32,10 +33,11 @@ module.exports = {
         {
           plugins: [
             addMissingRequireMisc, // keep for default bundling
+            isProd ? transformPackFilepaths : null, // keep for minification
             jsxPluginConfig, // keep for default bundling
             '@babel/plugin-transform-classes',
             '@babel/plugin-transform-destructuring',
-          ],
+          ].filter(plugin => plugin),
         }, [
           '@babel/preset-env', {
             modules: 'amd', // keep for default bundling
@@ -78,7 +80,7 @@ module.exports = {
   nodeWatchPaths: [
     // this configures which paths are watched for ssr
     'src',
-  ], 
+  ],
   ssrIndex: '/src/index.jsx', // which file is used to render ssr
   // entry file names for ssr - by default *.html files are ssr'ed if the ssrIndex is setup
   // but if the file doesn't end .html or the you want to create a static file build by
