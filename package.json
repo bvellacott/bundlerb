@@ -1,6 +1,6 @@
 {
   "name": "bundlerb",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "bundles on the fly",
   "main": "src/index.js",
   "repository": {
@@ -8,14 +8,16 @@
     "url": "git+https://github.com/bvellacott/bundlerb.git"
   },
   "keywords": [
+    "fast",
     "bundle",
     "js",
     "babel",
     "postcss",
-    "all",
-    "code",
     "no",
-    "config"
+    "extra",
+    "config",
+    "minimal",
+    "overhead"
   ],
   "author": "Benjamin Vellacott",
   "license": "GPL-2.0-only",
@@ -30,10 +32,7 @@
     "express": "^4.17.1",
     "node-watch": "^0.6.3",
     "pirates": "^4.0.1",
-    "postcss": "8.1.0",
-    "preact": "10.3.1",
-    "preact-render-to-string": "5.1.4",
-    "redux-zero": "5.1.6",
-    "shelljs": "0.8.3"
+    "postcss": "^8.1.0",
+    "shelljs": "^0.8.3"
   }
 }
