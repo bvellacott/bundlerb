@@ -1,13 +1,14 @@
 require('bueno-repo').setupAliases()
-
 const { join } = require('path')
 const express = require('express')
-const { setupBabelSsr } = require('../setupBabelSsr')
-const { buildIndex, bundlerBee } = require('..')
-const { requireConfig } = require('../utils')
+const {
+  buildIndex,
+  bundlerBee,
+  setupBabelSsr,
+} = require('bundlerb')
+const { requireBundlerbConfig } = require('bundlerb/utils')
 
-const config = requireConfig()
-
+const config = requireBundlerbConfig()
 const app = express();
 
 const index = buildIndex({
@@ -15,7 +16,7 @@ const index = buildIndex({
   syntaxPlugins: config.babel.clientSyntaxPlugins,
 })
 
-setupBabelSsr(index)
+setupBabelSsr(index.nonJsFiles, index.nonJsExtensions)
 const bundler = bundlerBee(index)
 
 const ssrJsx = (relativeModulePath, req, res) => {
@@ -77,4 +78,4 @@ app.get(['/*.scss.map', '/*.css.map'], (req, res) => {
 })
 app.use(express.static(process.cwd()))
 
-app.listen(4000);
+app.listen(config.port);

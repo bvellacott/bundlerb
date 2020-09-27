@@ -1,0 +1,50 @@
+{
+  "name": "bundlerb-test-project",
+  "version": "1.0.0",
+  "description": "a bundlerb test project - do not publish as an npm repo!!",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "NODE_ENV=development node asset-server/run-dev.js",
+    "start:debug": "NODE_ENV=development node --inspect-brk asset-server/run-dev.js",
+    "start:test:prod": "NODE_ENV=production node asset-server/run-dev.js",
+    "start:test:prod:debug": "NODE_ENV=production node --inspect-brk asset-server/run-dev.js",
+    "build:static": "node scripts/buildStatic.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bvellacott/bundlerb.git"
+  },
+  "keywords": [
+    "bundlerb",
+    "test",
+    "repo"
+  ],
+  "author": "Benjamin Vellacott",
+  "license": "GPL-2.0-only",
+  "bugs": {
+    "url": "https://github.com/bvellacott/bundlerb/issues"
+  },
+  "homepage": "https://github.com/bvellacott/bundlerb#readme",
+  "browserslist": [
+    "defaults",
+    "not IE 11",
+    "not IE_Mob 11"
+  ],
+  "dependencies": {
+    "@babel/plugin-transform-modules-commonjs": "7.10.4",
+    "@babel/plugin-transform-react-jsx": "7.10.4",
+    "@babel/preset-env": "7.11.5",
+    "cssnano": "4.1.10",
+    "postcss-custom-properties": "10.0.0",
+    "postcss-nested": "5.0.1",
+    "preact": "10.3.1",
+    "preact-render-to-string": "5.1.4",
+    "redux-zero": "5.1.6"
+  },
+  "moduleAliases": {
+    "^@/": "./src/"
+  },
+  "dependencyAliases": {
+    "^bundlerb": ".."
+  }
+}

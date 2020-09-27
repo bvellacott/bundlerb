@@ -2,13 +2,7 @@
   "name": "bundlerb",
   "version": "1.0.0",
   "description": "bundles on the fly",
-  "main": "index.js",
-  "scripts": {
-    "start": "NODE_ENV=development node bundlerb/asset-server/index.js",
-    "start:debug": "NODE_ENV=development node --inspect-brk bundlerb/asset-server/index.js",
-    "start:prod": "NODE_ENV=production node bundlerb/asset-server/index.js",
-    "build:static": "node ./scripts/buildStatic.js"
-  },
+  "main": "src/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bvellacott/bundlerb.git"
@@ -29,35 +23,17 @@
     "url": "https://github.com/bvellacott/bundlerb/issues"
   },
   "homepage": "https://github.com/bvellacott/bundlerb#readme",
-  "browserslist": [
-    "defaults",
-    "not IE 11",
-    "not IE_Mob 11"
-  ],
   "dependencies": {
-    "@babel/core": "7.8.4",
-    "@babel/plugin-proposal-class-properties": "7.8.3",
-    "@babel/plugin-syntax-jsx": "7.8.3",
-    "@babel/plugin-transform-classes": "7.8.3",
-    "@babel/plugin-transform-destructuring": "7.8.3",
-    "@babel/plugin-transform-modules-amd": "7.8.3",
-    "@babel/plugin-transform-modules-commonjs": "7.8.3",
-    "@babel/plugin-transform-react-jsx": "7.8.3",
-    "@babel/preset-env": "7.8.4",
+    "@babel/core": "^7.8.4",
     "bueno-repo": "^1.0.4",
-    "concat-with-sourcemaps": "1.1.0",
-    "cssnano": "4.1.10",
-    "express": "4.17.1",
-    "node-watch": "0.6.3",
-    "pirates": "4.0.1",
-    "postcss-custom-properties": "9.0.2",
-    "postcss-nested": "4.2.1",
+    "concat-with-sourcemaps": "^1.1.0",
+    "express": "^4.17.1",
+    "node-watch": "^0.6.3",
+    "pirates": "^4.0.1",
+    "postcss": "8.1.0",
     "preact": "10.3.1",
     "preact-render-to-string": "5.1.4",
-    "redux-zero": "^5.1.6",
+    "redux-zero": "5.1.6",
     "shelljs": "0.8.3"
-  },
-  "moduleAliases": {
-    "^@/": "./src/"
   }
 }

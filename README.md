@@ -53,5 +53,5 @@ npm run build:static
 
 ## config
 
-The bundlerb-config.js file at the root is used as the configuration file, see the comments in it to understand how it's used. It's not yet clear what parts should be pushed into code and what parts should be pulled into
+The bundlerb.config.js file at the root is used as the configuration file, see the comments in it to understand how it's used. It's not yet clear what parts should be pushed into code and what parts should be pulled into
 configuration so this project will stay as a template project, until that becomes clearer.
