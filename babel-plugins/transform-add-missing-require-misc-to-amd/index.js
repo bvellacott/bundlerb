@@ -67,9 +67,8 @@ const TransformAddMissingRequireMisc = () => {
             } else if (object.get('object').isIdentifier()) {
               name = object.get('object').node.name
             }
-            if (name === 'exports') {
+            if (name === 'exports' || name === 'module') {
               visitor.hasUnpassedExports = true;
-            } else if (name === 'module') {
               visitor.hasUnpassedModule = true;
             }
           }
@@ -83,7 +82,8 @@ const TransformAddMissingRequireMisc = () => {
         ExpressionStatement(definePropertyCall) {
           if (isValidDefinePropertyCallOnExports(definePropertyCall)) {
             visitor.hasUnpassedExports = true;
-          }
+            visitor.hasUnpassedModule = true;
+        }
         },
       }
       return visitor
