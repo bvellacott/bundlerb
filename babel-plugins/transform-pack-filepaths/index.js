@@ -2,13 +2,15 @@ const {
   stringLiteral,
 } = require('@babel/types')
 const {
+  isValidRequireCall,
   isValidDefineCall,
   pack,
 } = require('../../utils')
 
 const dontPack = {
-  'exports': true,
-  'module': true,
+  exports: true,
+  module: true,
+  require: true,
 }
 
 const TransformPackFilepaths = () => {
@@ -28,8 +30,12 @@ const TransformPackFilepaths = () => {
 
     const AmdVisitor = () => ({
       CallExpression(callExpression) {
-        if (!isValidDefineCall(callExpression)) return
-        packFilePaths(callExpression)
+        if (isValidRequireCall(callExpression)) {
+          const argument = callExpression.node.arguments[0]
+          argument.value = pack(argument.value)
+        } else if (isValidDefineCall(callExpression)) {
+          packFilePaths(callExpression)
+        }
       },
     });
 
