@@ -3,6 +3,7 @@ const resolve = require('resolve')
 const { transformAlias } = require('bueno-repo')
 
 const defaultConfig = {
+  port: 4000, 
   babel: {
     clientSyntaxPlugins: [],
     client: {
@@ -17,8 +18,8 @@ const defaultConfig = {
   },
 }
 
-const configPath = join(process.cwd(), 'bundlerb-config')
-const requireConfig = () => {
+const configPath = join(process.cwd(), 'bundlerb.config')
+const requireBundlerbConfig = () => {
   try {
     const config = require(configPath) || {}
     return {
@@ -33,10 +34,15 @@ const requireConfig = () => {
 }
 
 const packageFilter = pkg => {
-  const { moduleOverrides = {} } = requireConfig()
+  const { moduleOverrides = {}, platform } = requireBundlerbConfig()
+  const { PLATFORM = platform } = process.env
   return {
     ...pkg,
-    main: moduleOverrides[pkg.name] || pkg.module || pkg.main,
+    main:
+      moduleOverrides[pkg.name] ||
+      (pkg.platforms && pkg.platforms[PLATFORM]) ||
+      pkg.module ||
+      pkg.main,
   }
 }
 
@@ -98,11 +104,49 @@ const isValidDefinePropertyCallOnExports = nodepath => {
   return true;
 }
 
+function isValidDefineCall(nodepath) {
+  if (!nodepath.isCallExpression()) return false;
+  if (!nodepath.get('callee').isIdentifier({ name: 'define' })) {
+    return false;
+  }
+
+  const args = nodepath.get('arguments');
+  if (args.length !== 3) return false;
+
+  if (
+    !args[0].isStringLiteral() || 
+    !args[1].isArrayExpression() ||
+    !args[2].isFunctionExpression()
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
+const packMap = {}
+const unpackList = [null] // first item needs to be null so that the packed key is truthy
+
+const pack = (unpackedString) => {
+  let packed = packMap[unpackedString]
+  if (packed) {
+    return packed
+  }
+  packed = unpackList.length
+  unpackList.push(unpackedString)
+  return packMap[unpackedString] = `${packed}`
+}
+
+const unpack = (packedString) => unpackList[packedString] || packedString
+
 Object.defineProperty(exports, "__esModule", { value: true });
 
 exports.defaultConfig = defaultConfig
-exports.requireConfig = requireConfig
+exports.requireBundlerbConfig = requireBundlerbConfig
 exports.packageFilter = packageFilter
 exports.requireToPath = requireToPath
 exports.isValidRequireCall = isValidRequireCall
 exports.isValidDefinePropertyCallOnExports = isValidDefinePropertyCallOnExports
+exports.isValidDefineCall = isValidDefineCall
+exports.pack = pack
+exports.unpack = unpack

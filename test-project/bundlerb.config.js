@@ -2,7 +2,7 @@ const postcssNested = require('postcss-nested')
 const cssnano = require('cssnano')
 const postcssCustomProperties = require('postcss-custom-properties')
 
-const addMissingRequireMisc = require('./bundlerb/babel-plugins/transform-add-missing-require-misc-to-amd').default
+const addMissingRequireMisc = require('bundlerb/babel-plugins/transform-add-missing-require-misc-to-amd').default
 
 const isProd = process.env.NODE_ENV === 'production'
 
@@ -31,14 +31,14 @@ module.exports = {
       presets: [
         {
           plugins: [
-            addMissingRequireMisc,
-            jsxPluginConfig,
+            addMissingRequireMisc, // keep for default bundling
+            jsxPluginConfig, // keep for default bundling
             '@babel/plugin-transform-classes',
             '@babel/plugin-transform-destructuring',
           ],
         }, [
           '@babel/preset-env', {
-            modules: 'amd',
+            modules: 'amd', // keep for default bundling
           },
         ], 
       ],
@@ -52,7 +52,7 @@ module.exports = {
       // plugins to ensure ssr runs
       plugins: [
         jsxPluginConfig,
-        '@babel/plugin-transform-modules-commonjs',
+        '@babel/plugin-transform-modules-commonjs', // keep for es6 support on ssr
       ],
     },
   },
@@ -90,4 +90,5 @@ module.exports = {
     '/finally.html',
     '/404.html',
   ],
+  port: 4001,
 }

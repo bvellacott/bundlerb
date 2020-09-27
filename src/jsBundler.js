@@ -17,6 +17,7 @@ const jsBundler = {
       if (!js) {
         throw new Error(`the module '${path} has no js target'`)
       } else if (!js.result) {
+        console.log(js)
         throw new Error(`the module '${path} has no js target result'`)
       } else if (!js.result.code) {
         throw new Error(`the module '${path} has no js target result code'`)

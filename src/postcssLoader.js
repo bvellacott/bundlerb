@@ -1,9 +1,9 @@
 const { join, dirname } = require('path')
 const postcss = require('postcss')
 const BBError = require('./BBError')
-const { requireConfig } = require('./utils')
+const { requireBundlerbConfig } = require('../utils')
 
-const config = requireConfig()
+const config = requireBundlerbConfig()
 
 const loadCssTarget = api => (module, index) => new Promise((resolve, reject) => {
   module.css = module.css || {}

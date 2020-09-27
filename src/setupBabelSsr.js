@@ -3,15 +3,15 @@ const { resolve } = require('path')
 const { addHook } = require('pirates')
 const watch = require('node-watch')
 const babel = require('@babel/core')
-const BBError = require('./BBError')
-const { requireConfig } = require('./utils')
 const nodeModulesRegex = require('node-modules-regexp')
+const BBError = require('./BBError')
+const { requireBundlerbConfig } = require('../utils')
 
-const setupBabelSsr = (index) => {
-	const config = requireConfig()
+const setupBabelSsr = (nonJsFiles = {}, nonJsExtensions = []) => {
+	const config = requireBundlerbConfig()
 	
 	const handleNonJs = (contents, filename) => {
-		index.nonJsFiles[filename] = contents
+		nonJsFiles[filename] = contents
 		return ''																																			
 	}
 
@@ -29,7 +29,7 @@ const setupBabelSsr = (index) => {
 		ignoreNodeModules: false,
 	})
 	addHook(handleNonJs, {
-		exts: index.nonJsExtensions,
+		exts: nonJsExtensions,
 		ignoreNodeModules: false,
 	})
 	
