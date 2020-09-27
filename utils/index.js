@@ -3,7 +3,7 @@ const resolve = require('resolve')
 const { transformAlias } = require('bueno-repo')
 
 const defaultConfig = {
-  port: 4000, 
+  port: 4000,
   babel: {
     clientSyntaxPlugins: [],
     client: {

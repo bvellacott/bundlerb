@@ -16,8 +16,6 @@ const index = buildIndex({
   syntaxPlugins: config.babel.clientSyntaxPlugins,
 })
 
-debugger
-
 setupBabelSsr(index.nonJsFiles, index.nonJsExtensions)
 const bundler = bundlerBee(index)
 
