@@ -1,3 +1,4 @@
+import './preload'
 import { h, render } from 'preact'
 import { Provider } from 'redux-zero/preact'
 import { bindActions } from "redux-zero/utils";
@@ -32,3 +33,6 @@ const init = () => {
 }
 
 init()
+
+// resume the loading sequence [see "preload.js" for details]
+define.resume()

@@ -40,10 +40,16 @@ module.exports = {
           ].filter(plugin => plugin),
         }, [
           '@babel/preset-env', {
-            modules: 'amd', // keep for default bundling
+            modules: false, // keep for default bundling
           },
         ], 
       ],
+      overrides: [{
+        plugins: [
+          '@babel/plugin-transform-modules-amd', // keep for default bundling
+        ],
+        exclude: /.*\/client\/bequire\.js/, // keep for default bundling
+      }],
       sourceMaps: true,
       minified: isProd,
       compact: isProd,

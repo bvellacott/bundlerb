@@ -21,7 +21,6 @@ export default (req, res) => {
       <script>
         {`window.process = {env: {NODE_ENV: '${process.env.NODE_ENV}'}}`}
       </script>
-      <script src="/bequire.js"></script>
       <script src="/src/index.js"></script>
     </body>
   </html>);
