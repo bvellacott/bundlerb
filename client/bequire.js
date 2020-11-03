@@ -1,7 +1,7 @@
 'use strict';
 
-window.define = (function initialiseDefine() {
-  var assetRoot = window.ASSET_ROOT || ''
+self.define = (function initialiseDefine() {
+  var assetRoot = self.ASSET_ROOT || ''
   var isOpera = typeof opera !== 'undefined' && opera.toString() === '[object Opera]';
 
   function getScriptFrom(evt) {
@@ -53,7 +53,7 @@ window.define = (function initialiseDefine() {
   }
 
   function require(url) {
-    const module = window.define.modules[url]
+    const module = self.define.modules[url]
     load(module)
     return module.exports;
   }
@@ -128,7 +128,7 @@ window.define = (function initialiseDefine() {
         params.push(key + '=' + options.params[key])
       }
       const paramsString = params.length ? '&' + params.join('&') : ''
-      script.src = assetRoot + url + '?noLoadWrap=1&priorIds=' + window.define.priorIds.join(',') + paramsString;
+      script.src = assetRoot + url + '?noLoadWrap=1&priorIds=' + self.define.priorIds.join(',') + paramsString;
 
       //Set up load listener. Test attachEvent first because IE9 has
       //a subtle issue in its addEventListener and script onload firings
@@ -216,16 +216,16 @@ window.define = (function initialiseDefine() {
   return define
 })();
 
-window.requireAsync = (function initialiseRequire() {
+self.requireAsync = (function initialiseRequire() {
   let anonymousModuleCount = 0;
   return function requireAsync(depUrls, callback, options) {
     const name = '__anonymous__' + anonymousModuleCount++
-    window.define(name, depUrls, function() {
+    self.define(name, depUrls, function() {
       callback.apply(this, arguments);
       delete define.modules[name];
     }, options);
   };
 })();
 
-window.define.modules = {};
-window.define.priorIds = [];
+self.define.modules = {};
+self.define.priorIds = [];
