@@ -1,4 +1,3 @@
-import './preload'
 import { h, render } from 'preact'
 import { Provider } from 'redux-zero/preact'
 import { bindActions } from "redux-zero/utils";

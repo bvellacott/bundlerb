@@ -2,7 +2,7 @@ const { basename } = require('path')
 
 const jsCssBundler = {
   matcher: /\.js$/,
-  bundle: (module, flattenedWithoutPrior, index, concat) => {
+  bundle: (module, flattenedWithoutPrior, index, concat, noLoadWrap) => {
     flattenedWithoutPrior
       .filter(module => module.css)
       .forEach(({ sourceMapFilename, css: { result: { css, map }}}) =>

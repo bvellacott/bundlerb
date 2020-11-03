@@ -128,7 +128,7 @@ window.define = (function initialiseDefine() {
         params.push(key + '=' + options.params[key])
       }
       const paramsString = params.length ? '&' + params.join('&') : ''
-      script.src = assetRoot + url + '?priorIds=' + window.define.priorIds.join(',') + paramsString;
+      script.src = assetRoot + url + '?noLoadWrap=1&priorIds=' + window.define.priorIds.join(',') + paramsString;
 
       //Set up load listener. Test attachEvent first because IE9 has
       //a subtle issue in its addEventListener and script onload firings

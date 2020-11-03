@@ -1,8 +1,20 @@
 const { basename } = require('path')
+const { requireBundlerbConfig } = require('../utils')
+
+const config = requireBundlerbConfig()
+
+let preloadContent;
+let postloadContent;
 
 const jsBundler = {
   matcher: /\.js$|\.mjs$/,
-  bundle: (module, flattenedWithoutPrior, index, concat) => {
+  bundle: (module, flattenedWithoutPrior, index, concat, noLoadWrap) => {
+    if (!noLoadWrap) {
+      if (typeof preloadContent !== 'string') {
+        preloadContent = config.preloadScripts.join('\n')
+      }
+      concat.add(null, preloadContent)
+    }
     if (index.supportAsyncRequire) {
       concat.add(null, `window.define.priorIds.push(${module.id});`)
       if (index.loadStyles) {
@@ -23,6 +35,12 @@ const jsBundler = {
       }
       const { result: { code, map }} = js
       concat.add(sourceMapFilename, code, index.sourcemaps ? map : undefined)
+    }
+    if (!noLoadWrap) {
+      if (typeof postloadContent !== 'string') {
+        postloadContent = config.postloadScripts.join('\n')
+      }
+      concat.add(null, postloadContent)
     }
     if (index.sourcemaps) {
       concat.add(null,

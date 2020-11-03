@@ -16,21 +16,26 @@ const defaultConfig = {
   postcss: {
     plugins: [],
   },
+  preloadScripts: [],
+  postloadScripts: [],
 }
 
 const configPath = join(process.cwd(), 'bundlerb.config')
+let config
 const requireBundlerbConfig = () => {
-  try {
-    const config = require(configPath) || {}
-    return {
-      ...defaultConfig,
-      ...config,
+  if (!config) {
+    try {
+      config = {
+        ...defaultConfig,
+        ...(require(configPath) || {}),
+      }
+    } catch(e) {
+      console.error(e)
+      console.log(`unable to resolve config path at ${configPath} - using empty config instead`)
+      config = defaultConfig
     }
-  } catch(e) {
-    console.error(e)
-    console.log(`unable to resolve config path at ${configPath} - using empty config instead`)
-    return defaultConfig;
   }
+  return config
 }
 
 const packageFilter = pkg => {

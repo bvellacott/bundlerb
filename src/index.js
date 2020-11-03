@@ -142,7 +142,7 @@ const api = {
   },
 
   // can this be run on a separate thread?
-  concatenate: (module, index, priorIdsString, res) => {
+  concatenate: (module, index, noLoadWrap, priorIdsString, res) => {
     if (module.concat) {
       return
     }
@@ -233,13 +233,13 @@ const api = {
   },
 
   bundlerBee: (index = api.buildIndex()) => async (req, res, next) => {
-    const { modulePath, query: { priorIds: priorIdsString, loadStyles } } = req
+    const { modulePath, query: { noLoadWrap, priorIds: priorIdsString, loadStyles } } = req
     try {
       const requestIndex = {...index, priorIdsString, loadStyles: !!loadStyles, req, res }
       const module = await api.resolveRootModule(modulePath, requestIndex, true)
       res.setHeader('moduleId', module.id)
       res.setHeader('allIds', JSON.stringify(requestIndex.modulesArray.map(module => module.id)))
-      await api.concatenate(module, requestIndex, priorIdsString, res)
+      await api.concatenate(module, requestIndex, !!noLoadWrap, priorIdsString, res)
       req.module = module
       next()
     } catch (error) {

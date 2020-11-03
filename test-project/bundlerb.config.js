@@ -1,3 +1,4 @@
+const { readFileSync } = require('fs')
 const postcssNested = require('postcss-nested')
 const cssnano = require('cssnano')
 const postcssCustomProperties = require('postcss-custom-properties')
@@ -40,16 +41,10 @@ module.exports = {
           ].filter(plugin => plugin),
         }, [
           '@babel/preset-env', {
-            modules: false, // keep for default bundling
+            modules: 'amd', // keep for default bundling
           },
         ], 
       ],
-      overrides: [{
-        plugins: [
-          '@babel/plugin-transform-modules-amd', // keep for default bundling
-        ],
-        exclude: /.*\/client\/bequire\.js/, // keep for default bundling
-      }],
       sourceMaps: true,
       minified: isProd,
       compact: isProd,
@@ -79,6 +74,13 @@ module.exports = {
     ].filter(plugin => plugin),
   },
 
+  preloadScripts: [
+    readFileSync(require.resolve('bundlerb/client/bequire', 'utf8')),
+    'define.suspend()',
+  ],
+  postloadScripts: [
+    'define.resume()',
+  ],
   nodeWatch: {
     // this configures file watching for ssr
     recursive: true,
