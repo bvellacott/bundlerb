@@ -1,7 +1,7 @@
 const { dirname } = require('path')
 const { isModule } = require('@babel/helper-module-transforms')
 const {
-  requireToPath,
+  browserRequireToPath,
   isValidRequireCall,
 } = require('../../utils')
 
@@ -11,7 +11,7 @@ const TransformImportsToCommonRoot = (module = {}) => {
       CallExpression(nodepath) {
         if (!isValidRequireCall(nodepath)) return;
         const req = nodepath.node.arguments[0].value;
-        const newPath = requireToPath(req, filedir, basedir);
+        const newPath = browserRequireToPath(req, filedir, basedir);
         nodepath.node.arguments[0].value = newPath;
         dependencyPaths.push(newPath);
       },
@@ -40,13 +40,13 @@ const TransformImportsToCommonRoot = (module = {}) => {
   };
 };
 
-const getEs6Imports = (path, filedir, basedir, aliases) => {
+const getEs6Imports = (path, filedir, basedir) => {
   if (!isModule(path)) return [];
   return path.get('body')
     .filter(child => 
       (child.isImportDeclaration() || child.isExportDeclaration()) && child.get('source').node)
     .map(child => {
-      const newPath = requireToPath(child.get('source').node.value, filedir, basedir, aliases)
+      const newPath = browserRequireToPath(child.get('source').node.value, filedir, basedir)
       child.get('source').node.value = newPath
       return newPath
     })

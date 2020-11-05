@@ -1,6 +1,9 @@
 const { join, relative } = require('path')
 const resolve = require('resolve')
-const { transformAlias } = require('bueno-repo')
+const {
+  transformAlias,
+  transformBrowserAlias,
+} = require('bueno-repo')
 
 const defaultConfig = {
   port: 4000,
@@ -51,8 +54,14 @@ const packageFilter = pkg => {
   }
 }
 
-const requireToPath = (req, filedir, basedir) => {
-  const withAliasResolved = transformAlias(req, basedir)
+const browserRequireToPath = (req, filedir, basedir) => (
+  requireToPath(req, filedir, basedir, true)
+)
+
+const requireToPath = (req, filedir, basedir, isBrowser) => {
+  const withAliasResolved = isBrowser
+    ? transformBrowserAlias(req, basedir)
+    : transformAlias(req, basedir)
   let absolutePath
   if (
     !withAliasResolved.startsWith('/') &&
@@ -150,6 +159,7 @@ exports.defaultConfig = defaultConfig
 exports.requireBundlerbConfig = requireBundlerbConfig
 exports.packageFilter = packageFilter
 exports.requireToPath = requireToPath
+exports.browserRequireToPath = browserRequireToPath
 exports.isValidRequireCall = isValidRequireCall
 exports.isValidDefinePropertyCallOnExports = isValidDefinePropertyCallOnExports
 exports.isValidDefineCall = isValidDefineCall
