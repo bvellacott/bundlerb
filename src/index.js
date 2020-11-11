@@ -64,9 +64,7 @@ const api = {
     index.rootModulePath = modulePath
     try {
       const module = await api.resolveModule(modulePath, index, context)
-      if (module.resolvingPromise) {
-        await module.resolvingPromise
-      }
+      await Promise.all(api.flatten(module).map((m) => m.resolvingPromise))
       return module
     } catch (e) {
       const module = index.modulesByPath[modulePath]
