@@ -241,6 +241,8 @@ const api = {
       req.module = module
       next()
     } catch (error) {
+      errorCount++
+      console.log('\n', 'ERR[', errorCount, ']', new Date(), '----------------------------------------------\n')
       console.log(error)
       res.statusCode = 500
       res.statusMessage = `failed to bundle ${module.path}`
@@ -248,6 +250,8 @@ const api = {
     }
   },
 }
+
+let errorCount = 0
 
 api.setupBabelSsr = require('./setupBabelSsr').setupBabelSsr
 api.default = api
