@@ -4,6 +4,7 @@ import render from 'preact-render-to-string';
 import { configureStore } from '@/store'
 import { App } from '@/components/App';
 
+const isProd = process.env.NODE_ENV === 'production'
 
 export default (req, res) => {
   const store = configureStore()
@@ -22,6 +23,7 @@ export default (req, res) => {
         {`window.process = {env: {NODE_ENV: '${process.env.NODE_ENV}'}}`}
       </script>
       <script src="/src/index.js"></script>
+      {}
     </body>
   </html>);
 }

@@ -5,6 +5,7 @@ const {
   buildIndex,
   bundlerBee,
   setupBabelSsr,
+  addWebsocketControlServer,
 } = require('bundlerb')
 const { requireBundlerbConfig } = require('bundlerb/utils')
 
@@ -78,4 +79,6 @@ app.get(['/*.scss.map', '/*.css.map'], (req, res) => {
 })
 app.use(express.static(process.cwd()))
 
-app.listen(config.port);
+const server = app.listen(config.port);
+
+addWebsocketControlServer(server);

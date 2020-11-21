@@ -254,6 +254,7 @@ const api = {
 let errorCount = 0
 
 api.setupBabelSsr = require('./setupBabelSsr').setupBabelSsr
+api.addWebsocketControlServer = require('./websocketControlServer').addWebsocketControlServer
 api.default = api
 
 module.exports = api

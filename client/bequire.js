@@ -32,7 +32,7 @@ self.define = (function initialiseDefine() {
     removeListener(script, onScriptError, 'error');
   }
 
-  const dontLoadStatuses = { loaded: true, inCallback: true }
+  var dontLoadStatuses = { loaded: true, inCallback: true }
 
   function load(module) {
     if (dontLoadStatuses[module.status]) {
@@ -53,7 +53,7 @@ self.define = (function initialiseDefine() {
   }
 
   function require(url) {
-    const module = self.define.modules[url]
+    var module = self.define.modules[url]
     load(module)
     return module.exports;
   }
@@ -74,8 +74,8 @@ self.define = (function initialiseDefine() {
     var dependencies = module.dependencies;
     var loaded = true;
     for (var url in dependencies) {
-      const dependency = define.modules[url];
-      const hasNotLoaded = 
+      var dependency = define.modules[url];
+      var hasNotLoaded = 
         url !== 'exports' &&
         url !== 'module' &&
         url !== 'require' && (
@@ -123,11 +123,11 @@ self.define = (function initialiseDefine() {
       script.type = 'text/javascript';
       script.charset = 'utf-8';
       script.async = true;
-      let params = [];
+      var params = [];
       for(var key in (options.params || {})) {
         params.push(key + '=' + options.params[key])
       }
-      const paramsString = params.length ? '&' + params.join('&') : ''
+      var paramsString = params.length ? '&' + params.join('&') : ''
       script.src = assetRoot + url + '?noLoadWrap=1&priorIds=' + self.define.priorIds.join(',') + paramsString;
 
       //Set up load listener. Test attachEvent first because IE9 has
@@ -207,8 +207,8 @@ self.define = (function initialiseDefine() {
   define.resume = () => {
     var suspendedModules = define.suspendedModules || []
     define.suspendedModules = null
-    for (let i = 0; i < suspendedModules.length; i++) {
-      const module = suspendedModules[i]
+    for (var i = 0; i < suspendedModules.length; i++) {
+      var module = suspendedModules[i]
       load(module)
     }
   }
@@ -217,9 +217,9 @@ self.define = (function initialiseDefine() {
 })();
 
 self.requireAsync = (function initialiseRequire() {
-  let anonymousModuleCount = 0;
+  var anonymousModuleCount = 0;
   return function requireAsync(depUrls, callback, options) {
-    const name = '__anonymous__' + anonymousModuleCount++
+    var name = '__anonymous__' + anonymousModuleCount++
     self.define(name, depUrls, function() {
       callback.apply(this, arguments);
       delete define.modules[name];
