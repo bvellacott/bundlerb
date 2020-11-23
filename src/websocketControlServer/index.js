@@ -1,8 +1,8 @@
 const WebSocket = require('ws')
 const url = require('url')
-const actions = require('./actions')
+const defaultActions = require('./actions')
 
-const execute = (msg) => {
+const execute = (msg, actions) => {
   const message = JSON.parse(msg)
   const { id, method, params } = message
   const action = actions[method]
@@ -11,7 +11,15 @@ const execute = (msg) => {
   }
 }
 
-const addWebsocketControlServer = (server, path = '/bb-ws-control') => new Promise((resolve, reject) => {
+const addWebsocketControlServer = (
+  server,
+  options = {}
+) => new Promise((resolve, reject) => {
+  const {
+    actions = {},
+    path = '/bb-ws-control',
+  } = options
+  const allActions = { ...defaultActions, ...actions }
   try {
     const websocketControl = new WebSocket.Server({ noServer: true })
     websocketControl.on('connection', (ws, request, client) => {
@@ -27,7 +35,7 @@ const addWebsocketControlServer = (server, path = '/bb-ws-control') => new Promi
   
       ws.on('message', (msg) => {
         console.log(msg)
-        const result = execute(msg)
+        const result = execute(msg, allActions)
         if (result && typeof result === 'object') {
           ws.send(JSON.stringify(result))
         }

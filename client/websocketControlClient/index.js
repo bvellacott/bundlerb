@@ -1,6 +1,6 @@
-import * as actions from './actions'
+import * as defaultActions from './actions'
 
-export const execute = (msg) => {
+export const execute = (msg, actions) => {
   const message = JSON.parse(msg)
   const { id, method, params } = message
   const action = actions[method]
@@ -9,7 +9,13 @@ export const execute = (msg) => {
   }
 }
 
-export const addWebsocketControlClient = (path = '/bb-ws-control') => {
+export const addWebsocketControlClient = (options = {}) => {
+  const {
+    actions = {},
+    path = '/bb-ws-control',
+  } = options
+  const allActions = { ...defaultActions, ...actions }
+
   const socket = new WebSocket(`ws://${document.location.host}${path}`);
   socket.addEventListener('open', (event) => {
     console.log('connected websocket control client')
@@ -17,7 +23,7 @@ export const addWebsocketControlClient = (path = '/bb-ws-control') => {
 
   socket.addEventListener('message', (event) => {
     console.log(event.data)
-    const result = execute(event.data)
+    const result = execute(event.data, allActions)
     if (result && typeof result === 'object') {
       socket.send(JSON.stringify(result))
     }

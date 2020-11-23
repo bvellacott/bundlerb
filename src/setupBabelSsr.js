@@ -50,11 +50,13 @@ const setupBabelSsr = (
 					try {
 						module = require.cache[filename]
 						require.cache[filename] = {}
-						clearParentsFromCache(require.cache, [module])
+						const parents = clearParentsFromCache(require.cache, [module])
+						delete require.cache[filename]
+						parents.forEach(({ filename }) => require(filename))
+						require(filename)
 					} catch (e) {
 						throw new BBError(`failed to clear parent modules from cache for: ${filename}`, e)
 					}
-					delete require.cache[filename]
 				}
 			} catch (e) {
 				console.error(e)
@@ -71,6 +73,7 @@ const clearParentsFromCache = (cache, modules) => {
 		})
 		clearParentsFromCache(cache, parents)
 	}
+	return parents || []
 }
 
 const getParentsFromCache = (cache, modules) =>

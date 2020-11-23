@@ -37,4 +37,13 @@ init()
 // resume the loading sequence [see "preload.js" for details]
 define.resume()
 
-addWebsocketControlClient()
+addWebsocketControlClient({
+  actions: {
+    fileChanged: (id, { filename }) => {
+      if (filename.endsWith('.css') || filename.endsWith('.scss')) {
+        const style = document.querySelector('link[href*="/src/index.jscss"]')
+        style.href = `/src/index.jscss?change=${id}`
+      }
+    }
+  }
+})

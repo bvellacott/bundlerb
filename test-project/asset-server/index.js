@@ -80,18 +80,25 @@ app.use(express.static(process.cwd()))
 
 const server = app.listen(config.port)
 
-addWebsocketControlServer(server).then((sendWsControl) => {
+let sendWsControl = () => {}
+addWebsocketControlServer(server).then((send) => {
+  sendWsControl = send
   sendWsControl()
 })
 
+let changeId = 0
 const watchCallback = (filename) => {
-  if (filename.endsWith('.css') || filename.endsWith('.scss')) {
-    
-  }
+  sendWsControl({
+    id: `file-changed-${changeId}`,
+    method: 'fileChanged',
+    params: {
+      filename,
+    },
+  })
 }
 
 setupBabelSsr(
   index.nonJsFiles,
   index.nonJsExtensions,
-  watchCallback, 
+  watchCallback,
 )
