@@ -17,7 +17,6 @@ const index = buildIndex({
   syntaxPlugins: config.babel.clientSyntaxPlugins,
 })
 
-setupBabelSsr(index.nonJsFiles, index.nonJsExtensions)
 const bundler = bundlerBee(index)
 
 const ssrJsx = (relativeModulePath, req, res) => {
@@ -79,6 +78,20 @@ app.get(['/*.scss.map', '/*.css.map'], (req, res) => {
 })
 app.use(express.static(process.cwd()))
 
-const server = app.listen(config.port);
+const server = app.listen(config.port)
 
-addWebsocketControlServer(server);
+addWebsocketControlServer(server).then((sendWsControl) => {
+  sendWsControl()
+})
+
+const watchCallback = (filename) => {
+  if (filename.endsWith('.css') || filename.endsWith('.scss')) {
+    
+  }
+}
+
+setupBabelSsr(
+  index.nonJsFiles,
+  index.nonJsExtensions,
+  watchCallback, 
+)

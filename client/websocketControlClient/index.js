@@ -19,7 +19,7 @@ export const addWebsocketControlClient = (path = '/bb-ws-control') => {
     console.log(event.data)
     const result = execute(event.data)
     if (result && typeof result === 'object') {
-      ws.send(JSON.stringify(result))
+      socket.send(JSON.stringify(result))
     }
   })
 

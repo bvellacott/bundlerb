@@ -7,7 +7,11 @@ const nodeModulesRegex = require('node-modules-regexp')
 const BBError = require('./BBError')
 const { requireBundlerbConfig } = require('../utils')
 
-const setupBabelSsr = (nonJsFiles = {}, nonJsExtensions = []) => {
+const setupBabelSsr = (
+	nonJsFiles = {},
+	nonJsExtensions = [],
+	watchCb,
+) => {
 	const config = requireBundlerbConfig()
 	
 	const handleNonJs = (contents, filename) => {
@@ -41,6 +45,7 @@ const setupBabelSsr = (nonJsFiles = {}, nonJsExtensions = []) => {
 		(evt, filename) => {
 			try {
 				if (filename && fs.statSync(filename).isFile() && require.cache[filename]) {
+					watchCb && watchCb(filename)
 					console.log(`clearing ${filename} from cache`)
 					try {
 						module = require.cache[filename]
