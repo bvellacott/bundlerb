@@ -44,7 +44,7 @@ const setupBabelSsr = (
 		config.nodeWatch,
 		(evt, filename) => {
 			try {
-				if (filename && fs.statSync(filename).isFile() && require.cache[filename]) {
+				if (filename && fs.statSync(filename).isFile()) {
 					watchCb && watchCb(filename)
 					console.log(`clearing ${filename} from cache`)
 					try {
