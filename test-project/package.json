@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "NODE_ENV=development node asset-server/run-dev.js",
-    "start:debug": "NODE_ENV=development node --inspect-brk asset-server/run-dev.js",
+    "start:debug": "NODE_ENV=development node --inspect asset-server/run-dev.js",
     "start:test:prod": "NODE_ENV=production node asset-server/run-dev.js",
     "start:test:prod:debug": "NODE_ENV=production node --inspect-brk asset-server/run-dev.js",
     "build:static": "node scripts/buildStatic.js"

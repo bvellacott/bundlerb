@@ -7,13 +7,17 @@ const nodeModulesRegex = require('node-modules-regexp')
 const BBError = require('./BBError')
 const { requireBundlerbConfig } = require('../utils')
 
+const config = requireBundlerbConfig()
+const { filter =  () => true } = config.nodeWatch
+const watchFilter = typeof filter.test === 'function'
+	? (f) => filter.test(f)
+	: filter
+
 const setupBabelSsr = (
 	nonJsFiles = {},
 	nonJsExtensions = [],
 	watchCb,
-) => {
-	const config = requireBundlerbConfig()
-	
+) => {	
 	const handleNonJs = (contents, filename) => {
 		nonJsFiles[filename] = contents
 		return ''																																			
@@ -76,10 +80,12 @@ const clearParentsFromCache = (cache, modules) => {
 	return parents || []
 }
 
-const getParentsFromCache = (cache, modules) =>
-	Object.values(cache)
+const getParentsFromCache = (cache, modules) => {
+	return Object.values(cache)
+		.filter(({ filename }) => watchFilter(filename))
 		.filter(({ children = [] }) => modules
 			.some(({ filename }) => children
 				.find(({ filename: childFilename }) => childFilename === filename)))
+}
 
 exports.setupBabelSsr = setupBabelSsr

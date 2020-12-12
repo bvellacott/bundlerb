@@ -1,3 +1,4 @@
+const { join } = require('path')
 const { readFileSync } = require('fs')
 const postcssNested = require('postcss-nested')
 const cssnano = require('cssnano')
@@ -84,6 +85,7 @@ module.exports = {
   nodeWatch: {
     // this configures file watching for ssr
     recursive: true,
+    filter: new RegExp(join(process.cwd(), 'src')) // stop parents from being watched outside of src
   },
   nodeWatchPaths: [
     // this configures which paths are watched for ssr
