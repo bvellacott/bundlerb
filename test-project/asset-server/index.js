@@ -9,6 +9,8 @@ const {
 } = require('bundlerb')
 const { requireBundlerbConfig } = require('bundlerb/utils')
 
+const isDev = process.env.NODE_ENV === 'development'
+
 const config = requireBundlerbConfig()
 const app = express();
 
@@ -81,20 +83,23 @@ app.use(express.static(process.cwd()))
 const server = app.listen(config.port)
 
 let sendWsControl = () => {}
-addWebsocketControlServer(server).then((send) => {
-  sendWsControl = send
-  sendWsControl()
-})
-
-let changeId = 0
-const watchCallback = (filename) => {
-  sendWsControl({
-    id: `file-changed-${changeId}`,
-    method: 'fileChanged',
-    params: {
-      filename,
-    },
+let watchCallback = () => {}
+if (isDev) {
+  addWebsocketControlServer(server).then((send) => {
+    sendWsControl = send
+    sendWsControl()
   })
+  
+  let changeId = 0
+  watchCallback = (filename) => {
+    sendWsControl({
+      id: `file-changed-${changeId}`,
+      method: 'fileChanged',
+      params: {
+        filename,
+      },
+    })
+  }
 }
 
 setupBabelSsr(

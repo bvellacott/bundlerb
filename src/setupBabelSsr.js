@@ -13,6 +13,8 @@ const watchFilter = typeof filter.test === 'function'
 	? (f) => filter.test(f)
 	: filter
 
+const isDev = process.env.NODE_ENV === 'development'
+
 const setupBabelSsr = (
 	nonJsFiles = {},
 	nonJsExtensions = [],
@@ -41,31 +43,33 @@ const setupBabelSsr = (
 		ignoreNodeModules: false,
 	})
 	
-	watch(
-		(config.nodeWatchPaths || []).map(
-			path => resolve(process.cwd(), path)
-		),
-		config.nodeWatch,
-		(evt, filename) => {
-			try {
-				if (filename && fs.statSync(filename).isFile()) {
-					watchCb && watchCb(filename)
-					console.log(`clearing ${filename} from cache`)
-					try {
-						module = require.cache[filename]
-						require.cache[filename] = {}
-						const parents = clearParentsFromCache(require.cache, [module])
-						delete require.cache[filename]
-						parents.forEach(({ filename }) => require(filename))
-						require(filename)
-					} catch (e) {
-						throw new BBError(`failed to clear parent modules from cache for: ${filename}`, e)
+	if (isDev) {
+		watch(
+			(config.nodeWatchPaths || []).map(
+				path => resolve(process.cwd(), path)
+			),
+			config.nodeWatch,
+			(evt, filename) => {
+				try {
+					if (filename && fs.statSync(filename).isFile()) {
+						watchCb && watchCb(filename)
+						console.log(`clearing ${filename} from cache`)
+						try {
+							module = require.cache[filename]
+							require.cache[filename] = {}
+							const parents = clearParentsFromCache(require.cache, [module])
+							delete require.cache[filename]
+							parents.forEach(({ filename }) => require(filename))
+							require(filename)
+						} catch (e) {
+							throw new BBError(`failed to clear parent modules from cache for: ${filename}`, e)
+						}
 					}
+				} catch (e) {
+					console.error(e)
 				}
-			} catch (e) {
-				console.error(e)
-			}
-		});
+			});
+	}
 }
 
 const clearParentsFromCache = (cache, modules) => {
@@ -75,15 +79,21 @@ const clearParentsFromCache = (cache, modules) => {
 			console.log(`clearing ${filename} from cache`)
 			delete require.cache[filename]
 		})
-		clearParentsFromCache(cache, parents)
+		try {
+			clearParentsFromCache(cache, parents)
+		} catch (e) {
+			throw new BBError('failed to clear parent modules from cache', e)
+		}
 	}
 	return parents || []
 }
 
 const getParentsFromCache = (cache, modules) => {
 	return Object.values(cache)
+		.filter((module) => module && watchFilter(module.filename))
 		.filter(({ filename }) => watchFilter(filename))
 		.filter(({ children = [] }) => modules
+			.filter((module) => module && watchFilter(module.filename))
 			.some(({ filename }) => children
 				.find(({ filename: childFilename }) => childFilename === filename)))
 }
