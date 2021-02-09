@@ -15,11 +15,19 @@ const watchFilter = typeof filter.test === 'function'
 
 const isDev = process.env.NODE_ENV === 'development'
 
+const watchCallbacks = []
+const addWatchCallback = (watchCb) => {
+	if (typeof watchCb === 'function') {
+		watchCallbacks.push(watchCb)
+	}
+}
+
 const setupBabelSsr = (
 	nonJsFiles = {},
 	nonJsExtensions = [],
 	watchCb,
-) => {	
+) => {
+	addWatchCallback(watchCb)
 	const handleNonJs = (contents, filename) => {
 		nonJsFiles[filename] = contents
 		return ''																																			
@@ -52,7 +60,7 @@ const setupBabelSsr = (
 			(evt, filename) => {
 				try {
 					if (filename && fs.statSync(filename).isFile()) {
-						watchCb && watchCb(filename)
+						watchCallbacks.forEach(watchCb => watchCb(filename))
 						console.log(`clearing ${filename} from cache`)
 						try {
 							module = require.cache[filename]
@@ -99,3 +107,4 @@ const getParentsFromCache = (cache, modules) => {
 }
 
 exports.setupBabelSsr = setupBabelSsr
+exports.addWatchCallback = addWatchCallback

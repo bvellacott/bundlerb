@@ -21,18 +21,11 @@ const addWebsocketControlServer = (
   } = options
   const allActions = { ...defaultActions, ...actions }
   try {
-    const websocketControl = new WebSocket.Server({ noServer: true })
-    websocketControl.on('connection', (ws, request, client) => {
-      const sendWsControl = (
-        message = {
-          id: -1,
-          method: 'ping',
-          params: {}
-        }
-      ) => ws.send(JSON.stringify(message))
-      resolve(sendWsControl)
-      console.log('connected websocket control server')
-  
+    const websocketControl = new WebSocket.Server({
+      noServer: true,
+      clientTracking: true,
+    })
+    websocketControl.on('connection', (ws, request, client) => {      
       ws.on('message', (msg) => {
         console.log(msg)
         const result = execute(msg, allActions)
@@ -40,6 +33,8 @@ const addWebsocketControlServer = (
           ws.send(JSON.stringify(result))
         }
       })
+      console.log('connected websocket control server')
+      resolve(websocketControl)
     })
     
     server.on('upgrade', function upgrade(request, socket, head) {

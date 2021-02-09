@@ -254,6 +254,7 @@ const api = {
 let errorCount = 0
 
 api.setupBabelSsr = require('./setupBabelSsr').setupBabelSsr
+api.addWatchCallback = require('./setupBabelSsr').addWatchCallback
 api.addWebsocketControlServer = require('./websocketControlServer').addWebsocketControlServer
 api.default = api
 

@@ -11,7 +11,7 @@ import {
   startRouter,
   createNavigateAction,
 } from '@/actions/history'
-import { App } from '@/components/App'
+import { App } from '@/components/App/__mocks__'
 
 const isDev = process.env.NODE_ENV === 'development'
 

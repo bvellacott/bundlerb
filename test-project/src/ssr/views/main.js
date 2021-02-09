@@ -16,14 +16,15 @@ export default (req, res) => {
       <link rel="stylesheet" href="/src/index.jscss" />
     </head>
     <body>
-      <Provider store={store}>
-        <App path={req.path} />
-      </Provider>
+      <div id="root">
+        <Provider store={store}>
+          <App path={req.path} />
+        </Provider>
+      </div>
       <script>
         {`window.process = {env: {NODE_ENV: '${process.env.NODE_ENV}'}}`}
       </script>
       <script src="/src/index.js"></script>
-      {}
     </body>
   </html>);
 }
