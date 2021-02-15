@@ -2,6 +2,7 @@ require('bueno-repo').setupAliases()
 const express = require('express')
 const {
   buildIndex,
+  bundlerBee,
   setupBabelSsr,
   addWatchCallback,
   addWebsocketControlServer,
@@ -21,6 +22,8 @@ setupBabelSsr(
   index.nonJsFiles,
   index.nonJsExtensions,
 )
+
+const bundler = bundlerBee(index)
 
 const _sendWsControl = (
   ws,
@@ -57,11 +60,15 @@ const start = (port, options) => {
 }
 
 start(config.port, {
-  setupSsrRoutes: require('../src/ssr').default
+  setupSsrRoutes: require('../src/ssr').default,
+  config,
+  bundler,
 })
 
 if (isDev && config.mocksAppPort) {
   start(config.mocksAppPort, {
-    setupSsrRoutes: require('../src/ssr/__mocks__').default
+    setupSsrRoutes: require('../src/ssr/__mocks__').default,
+    config,
+    bundler,
   })
 }

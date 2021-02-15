@@ -2,10 +2,6 @@ import { addWebsocketControlClient } from 'bundlerb/client/websocketControlClien
 import { h, render } from 'preact'
 import { Provider } from 'redux-zero/preact'
 import { bindActions } from "redux-zero/utils"
-import {
-  getWindow,
-  getLocation,
-} from '@/utils/globals'
 import { configureStore } from '@/store'
 import {
   startRouter,
@@ -16,7 +12,6 @@ import { App } from '@/components/App'
 const isDev = process.env.NODE_ENV === 'development'
 
 const init = () => {
-  const location = getLocation()
   const store = configureStore()
   const Main = () => (
     <Provider store={store}>
@@ -29,9 +24,9 @@ const init = () => {
   const actions = bindActions({
     navigate: createNavigateAction(store),
   }, store)
-  actions.navigate(location)
+  actions.navigate(document.location)
 
-  render(<Main />, getWindow().getElementById('root'))
+  render(<Main />, document.getElementById('root'))
 }
 
 init()
@@ -46,6 +41,8 @@ if (isDev) {
         if (filename.endsWith('.css') || filename.endsWith('.scss')) {
           const style = document.querySelector('link[href*="/src/index.jscss"]')
           style.setAttribute('href', `/src/index.jscss?change=${id}`)
+        } else if (filename.endsWith('.js') || filename.endsWith('.jsx') || filename.endsWith('.mjs')) {
+          document.location.reload()
         }
       }
     }

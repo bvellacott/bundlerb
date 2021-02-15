@@ -1,40 +1,24 @@
 require('bueno-repo').setupAliases()
 const express = require('express')
-const {
-  buildIndex,
-  bundlerBee,
-  setupBabelSsr,
-} = require('bundlerb')
-const { requireBundlerbConfig } = require('bundlerb/utils')
-
-const config = requireBundlerbConfig()
-
-const index = buildIndex({
-  defaultBabelOptions: config.babel.client,
-  syntaxPlugins: config.babel.clientSyntaxPlugins,
-})
-
-setupBabelSsr(
-  index.nonJsFiles,
-  index.nonJsExtensions,
-)
 
 const isDev = process.env.NODE_ENV === 'development'
 
-const bundler = bundlerBee(index)
-
 const initRoutes = (app, {
-  setupSsrRoutes = () => {}
+  setupSsrRoutes = () => {},
+  config,
+  bundler,
 } = {}) => {
   app.get('*', (req, res, next) => {
     // console.log('CALLING:', req.path)
     next()
   })
-  config.discardPaths && app.get(config.discardPaths, (req, res, next) => {
-    res.setHeader('Content-Type', 'text/plain;charset=UTF-8')
-    res.send('')
-    // console.log('DISCARDED:', req.path)
-  })
+  if (config.discardPaths) {
+    app.get(config.discardPaths, (req, res, next) => {
+      res.setHeader('Content-Type', 'text/plain;charset=UTF-8')
+      res.send('')
+      // console.log('DISCARDED:', req.path)
+    })
+  }
   app.use(express.static('static'))
   if (isDev) {
     app.get(['/*.js', '/*.js.map', '/*.mjs', '/*.mjs.map', '/*.scss', '/*.scss.map', '/*.css', '/*.css.map'],

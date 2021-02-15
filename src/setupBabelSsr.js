@@ -43,7 +43,7 @@ const setupBabelSsr = (
 	}
 	
 	addHook(handleJsx, {
-		exts: ['.js', '.jsx'],
+		exts: ['.js', '.mjs', '.jsx'],
 		ignoreNodeModules: false,
 	})
 	addHook(handleNonJs, {
@@ -67,8 +67,11 @@ const setupBabelSsr = (
 							require.cache[filename] = {}
 							const parents = clearParentsFromCache(require.cache, [module])
 							delete require.cache[filename]
-							parents.forEach(({ filename }) => require(filename))
-							require(filename)
+
+							// ! these lines shouldn't be needed !
+							// parents.forEach(({ filename }) => require(filename))
+							// require(filename)
+						
 						} catch (e) {
 							throw new BBError(`failed to clear parent modules from cache for: ${filename}`, e)
 						}
