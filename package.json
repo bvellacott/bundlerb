@@ -1,6 +1,6 @@
 {
   "name": "bundlerb",
-  "version": "1.1.2-rc9",
+  "version": "1.1.2-rc10",
   "description": "bundles on the fly",
   "main": "src/index.js",
   "repository": {
@@ -32,7 +32,7 @@
     "express": "^4.17.1",
     "node-watch": "^0.6.3",
     "pirates": "^4.0.1",
-    "postcss": "^8.1.0",
+    "postcss": "^8.2.15",
     "shelljs": "^0.8.3",
     "ws": "^7.4.0"
   }
