@@ -16,7 +16,10 @@ export const addWebsocketControlClient = (options = {}) => {
   } = options
   const allActions = { ...defaultActions, ...actions }
 
-  const socket = new WebSocket(`ws://${document.location.host}${path}`);
+  const { protocol } = document.location
+  const websocketProtocol = protocol === 'https:' ? 'wss:' : 'ws:'
+
+  const socket = new WebSocket(`${websocketProtocol}//${document.location.host}${path}`);
   socket.addEventListener('open', (event) => {
     console.log('connected websocket control client')
   });
