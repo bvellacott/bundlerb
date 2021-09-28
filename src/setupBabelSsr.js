@@ -64,7 +64,7 @@ const setupBabelSsr = (
 	
 	if (isDev) {
 		chokidar.watch(
-			(config.watcherPaths || []).map(
+			(config.chokidarPaths || []).map(
 				path => resolve(process.cwd(), path)
 			),
 			config.chokidarConfig,
