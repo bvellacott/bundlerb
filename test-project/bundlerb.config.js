@@ -17,6 +17,8 @@ const jsxPluginConfig = [
   },
 ]
 
+const filter = new RegExp(join(process.cwd(), 'src'))
+
 module.exports = {
   // loaded before babel.config.js
   babel: {
@@ -82,12 +84,11 @@ module.exports = {
   postloadScripts: [
     'define.resume()',
   ],
-  nodeWatch: {
+  chokidarConfig: {
     // this configures file watching for ssr
-    recursive: true,
-    filter: new RegExp(join(process.cwd(), 'src')) // stop parents from being watched outside of src
+    ignored: (path) => !filter.test(path), // stop parents from being watched outside of src
   },
-  nodeWatchPaths: [
+  chokidarPaths: [
     // this configures which paths are watched for ssr
     'src',
   ],
