@@ -175,7 +175,8 @@ self.define = (function initialiseDefine() {
     });
   }
 
-  function define(url, depUrls, callback, options = {}) {
+  function define(url, depUrls, callback, options) {
+    options = options || {}
     if (!url) {
       throw new Error('You must provide a url when defining a module');
     }
@@ -203,8 +204,8 @@ self.define = (function initialiseDefine() {
       loadAsync(module, options)
     )
   };
-  define.suspend = () => { define.suspendedModules = [] }
-  define.resume = () => {
+  define.suspend = function() { define.suspendedModules = [] }
+  define.resume = function() {
     var suspendedModules = define.suspendedModules || []
     define.suspendedModules = null
     for (var i = 0; i < suspendedModules.length; i++) {
