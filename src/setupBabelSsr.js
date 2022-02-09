@@ -1,15 +1,17 @@
 const fs = require('fs')
 const { resolve } = require('path')
 const { addHook } = require('pirates')
-const chokidar = require('chokidar')
+const watch = require('node-watch')
 const babel = require('@babel/core')
 const nodeModulesRegex = require('node-modules-regexp')
 const BBError = require('./BBError')
 const { requireBundlerbConfig } = require('../utils')
 
 const config = requireBundlerbConfig()
-const { ignored = () => false } = config.chokidarConfig
-const watchFilter = (...args) => !ignored(...args)
+const { filter =  () => true } = config.nodeWatch
+const watchFilter = typeof filter.test === 'function'
+	? (f) => filter.test(f)
+	: filter
 
 const isDev = process.env.NODE_ENV === 'development'
 
@@ -63,35 +65,34 @@ const setupBabelSsr = (
 	})
 	
 	if (isDev) {
-		chokidar.watch(
-			(config.chokidarPaths || []).map(
+		watch(
+			(config.nodeWatchPaths || []).map(
 				path => resolve(process.cwd(), path)
 			),
-			config.chokidarConfig,
-		).on('raw', (_, __, details) => {
-			const { watchedPath: filename } = details
-			try {
-				if (filename && fs.statSync(filename).isFile()) {
-					watchCallbacks.forEach(watchCb => watchCb(filename))
-					console.log(`clearing ${filename} from cache`)
-					try {
-						module = require.cache[filename]
-						require.cache[filename] = {}
-						const parents = clearParentsFromCache(require.cache, [module])
-						delete require.cache[filename]
+			config.nodeWatch,
+			(evt, filename) => {
+				try {
+					if (filename && fs.statSync(filename).isFile()) {
+						watchCallbacks.forEach(watchCb => watchCb(filename))
+						console.log(`clearing ${filename} from cache`)
+						try {
+							module = require.cache[filename]
+							require.cache[filename] = {}
+							const parents = clearParentsFromCache(require.cache, [module])
+							delete require.cache[filename]
 
-						// non-js file contents need to be reloaded into the nonJsFiles object
-						// in order to be resolved by the client bundler
-						requireNonJsFiles(nonJsExtensions, filename, parents)
-					
-					} catch (e) {
-						throw new BBError(`failed to clear parent modules from cache for: ${filename}`, e)
+							// non-js file contents need to be reloaded into the nonJsFiles object
+							// in order to be resolved by the client bundler
+							requireNonJsFiles(nonJsExtensions, filename, parents)
+						
+						} catch (e) {
+							throw new BBError(`failed to clear parent modules from cache for: ${filename}`, e)
+						}
 					}
+				} catch (e) {
+					console.error(e)
 				}
-			} catch (e) {
-				console.error(e)
-			}
-		});
+			});
 	}
 }
 
