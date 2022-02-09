@@ -76,7 +76,7 @@ module.exports = {
   },
 
   preloadScripts: [
-    readFileSync(require.resolve('bundlerb/client/bequire', 'utf8')),
+    readFileSync(require.resolve(`bundlerb/client/bequire${isProd ? '.min' : ''}`, 'utf8')),
     'define.suspend()',
   ],
   postloadScripts: [
