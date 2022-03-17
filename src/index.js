@@ -55,7 +55,10 @@ const api = {
   invalidateCaches: (module, index) => {
     index.bundlers
       .filter(bundler => bundler.hasCachedResult(module))
-      .forEach(bundler => bundler.invalidate(module))
+      .forEach(bundler => {
+        bundler.invalidate(module)
+        bundler.invalidateConcatCache(module)
+      })
   },
 
   resolveRootModule: async (_modulePath, index, context) => {
@@ -139,9 +142,13 @@ const api = {
     return module
   },
 
+  hasCachedConcat: (module, index) => (
+    !index.bundlers.find(b => !b.hasCachedConcat(module))
+  ),
+
   // can this be run on a separate thread?
   concatenate: (module, index, noLoadWrap, priorIdsString, res) => {
-    if (module.concat) {
+    if (api.hasCachedConcat(module, index)) {
       return
     }
     const priorIds = (priorIdsString || '').split(',')

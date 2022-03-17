@@ -19,7 +19,18 @@ const jsCssBundler = {
     }
   },
   invalidate: module => delete module.jsCss,
-  hasCachedResult: module => !!module.jsCss
+  hasCachedResult: module => !!module.jsCss,
+  invalidateConcatCache: module => {
+    if (jsCssBundler.hasCachedConcat(module)) {
+      delete module.jsCss.result.concat
+    }
+    Object.values(module.dependants).forEach(
+      d => jsCssBundler.invalidateConcatCache(d),
+    )
+  },
+  hasCachedConcat: module => (
+    !!module.jsCss && !!module.jsCss.result && !!module.jsCss.result.concat
+  ),
 }
 
 exports.jsCssBundler = jsCssBundler

@@ -52,8 +52,17 @@ const jsBundler = {
     module.js = module.js || { result: {} }
     module.js.result.concat = concat
   },
-  invalidate: (module) => delete module.js,
-  hasCachedResult: module => !!module.js
+  invalidate: module => delete module.js,
+  hasCachedResult: module => !!module.js,
+  invalidateConcatCache: module => {
+    if (jsBundler.hasCachedConcat(module)) {
+      delete module.js.result.concat
+    }
+    Object.values(module.dependants).forEach(
+      d => jsBundler.invalidateConcatCache(d),
+    )
+  },
+  hasCachedConcat: module => !!module.js && !!module.js.result && !!module.js.result.concat,
 }
 
 exports.jsBundler = jsBundler
