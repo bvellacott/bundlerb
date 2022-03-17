@@ -27,7 +27,7 @@
   "homepage": "https://github.com/bvellacott/bundlerb#readme",
   "dependencies": {
     "@babel/core": "^7.8.4",
-    "bueno-repo": "^1.0.5",
+    "bueno-repo": "^1.0.6",
     "concat-with-sourcemaps": "^1.1.0",
     "express": "^4.17.1",
     "node-watch": "^0.6.3",
