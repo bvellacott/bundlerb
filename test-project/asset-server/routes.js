@@ -55,12 +55,12 @@ const initRoutes = (app, {
       res.send(req.module.css.result.concat.sourceMap)
     })
   } else {
-    app.get(['/src/index.js'],
+    app.get(['/src/index.js', '/src/index.js.map'],
       (req, res, next) => {
         req.modulePath = req.path
         return bundler(req, res, next)
       })
-    app.get(['/src/index.jscss'],
+    app.get(['/src/index.jscss', '/src/index.jscss.map'],
       (req, res, next) => {
         req.modulePath = req.path.replace(/\.jscss/, '.js')
         return bundler(req, res, next)
@@ -70,12 +70,20 @@ const initRoutes = (app, {
         res.setHeader('Content-Type', 'text/javascript;charset=UTF-8')
         res.send(req.module.js.result.concat.content)
       })
-    app.get('/src/index.jscss',
+      app.get(['/src/index.js.map'], (req, res) => {
+        res.setHeader('Content-Type', 'application/json;charset=UTF-8')
+        res.send(req.module.js.result.concat.sourceMap)
+      })
+      app.get('/src/index.jscss',
       (req, res) => {
         res.setHeader('Content-Type', 'text/css;charset=UTF-8')
         res.send(req.module.jsCss.result.concat.content)
       })
-  }
+      app.get('/src/index.jscss.map', (req, res) => {
+        res.setHeader('Content-Type', 'text/css;charset=UTF-8')
+        res.send(req.module.jsCss.result.concat.sourceMap)
+      })
+    }
   setupSsrRoutes(app)
 }
 
