@@ -47,10 +47,6 @@ module.exports = {
         ], 
       ],
       sourceMaps: true,
-      minified: isProd,
-      compact: isProd,
-      comments: !isProd,
-      retainLines: !isProd,
     },
     server: {
       // plugins to ensure ssr runs
@@ -76,14 +72,16 @@ module.exports = {
   },
   // https://www.npmjs.com/package/uglify-js#user-content-minify-options-structure
   uglifyjs: {
-    // parse: {},
-    compress: false,
+    compress: {
+      drop_console: true,
+      passes: 2,
+      toplevel: true,
+    },
     mangle: true,
     output: {
-      // output options
+      beautify: false,
+      indent_level: 0,
     },
-    // sourceMap: {},
-    // nameCache: null, // or specify a name cache object
     toplevel: false,
     warnings: false,
   },

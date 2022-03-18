@@ -68,11 +68,11 @@ const initRoutes = (app, {
     app.get(['/src/index.js'],
       (req, res) => {
         res.setHeader('Content-Type', 'text/javascript;charset=UTF-8')
-        res.send(req.module.js.result.concat.content)
+        res.send(req.module.js.result.concat.postprocessedContent)
       })
       app.get(['/src/index.js.map'], (req, res) => {
         res.setHeader('Content-Type', 'application/json;charset=UTF-8')
-        res.send(req.module.js.result.concat.sourceMap)
+        res.send(req.module.js.result.concat.postprocessedMap)
       })
       app.get('/src/index.jscss',
       (req, res) => {

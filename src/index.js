@@ -10,6 +10,9 @@ const { jsLoader } = require('./loaders/jsLoader')
 const { jsTranspilerLoader } = require('./loaders/jsTranspilerLoader')
 const { jsBundler } = require('./bundlers/jsBundler')
 const { jsCssBundler } = require('./bundlers/jsCssBundler')
+const { uglifyPostprocessor } = require('./postprocessors/uglifyPostprocessor')
+
+const isProd = process.env.NODE_ENV === 'production'
 
 const api = {
   defaultBaseDir: join(process.cwd()),
@@ -29,6 +32,9 @@ const api = {
     bundlers: [
       jsBundler,
       jsCssBundler,
+    ],
+    postprocessors: [
+      uglifyPostprocessor,
     ],
     aliases: {},
     basedir: api.defaultBaseDir,
@@ -148,9 +154,6 @@ const api = {
 
   // can this be run on a separate thread?
   concatenate: (module, index, noLoadWrap, priorIdsString, res) => {
-    if (api.hasCachedConcat(module, index)) {
-      return
-    }
     const priorIds = (priorIdsString || '').split(',')
       .reduce((ids, id) => {
         if (!id) {
@@ -193,6 +196,19 @@ const api = {
         ))
         return promises
       }, []))
+  },
+
+  postprocess: async (module, index) => {
+    if (!isProd) {
+      // dont't postprocess unless in prod, because of performance
+      return 
+    }
+    const postprocessors = index.postprocessors
+      .filter(({ matcher }) => matcher && matcher.test(module.path, module))
+    for (let i = 0; i < postprocessors.length; i++) {
+      const { postprocess } = postprocessors[i]
+      await postprocess(module, index)
+    }
   },
 
   findCircularModules: (module, path = [], circularModules = {}, circularInResolveOrder = []) => {
@@ -244,7 +260,10 @@ const api = {
       const module = await api.resolveRootModule(modulePath, requestIndex, true)
       res.setHeader('moduleId', module.id)
       res.setHeader('allIds', JSON.stringify(requestIndex.modulesArray.map(module => module.id)))
-      await api.concatenate(module, requestIndex, !!noLoadWrap, priorIdsString, res)
+      if (!api.hasCachedConcat(module, requestIndex)) {
+        await api.concatenate(module, requestIndex, !!noLoadWrap, priorIdsString, res)
+        await api.postprocess(module, requestIndex)
+      }
       req.module = module
       next()
     } catch (error) {
