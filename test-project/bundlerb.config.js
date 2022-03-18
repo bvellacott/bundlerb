@@ -74,7 +74,19 @@ module.exports = {
       }) : undefined,
     ].filter(plugin => plugin),
   },
-
+  // https://www.npmjs.com/package/uglify-js#user-content-minify-options-structure
+  uglifyjs: {
+    // parse: {},
+    compress: false,
+    mangle: true,
+    output: {
+      // output options
+    },
+    // sourceMap: {},
+    // nameCache: null, // or specify a name cache object
+    toplevel: false,
+    warnings: false,
+  },
   preloadScripts: [
     readFileSync(require.resolve(`bundlerb/client/bequire${isProd ? '.min' : ''}`, 'utf8')),
     'define.suspend()',

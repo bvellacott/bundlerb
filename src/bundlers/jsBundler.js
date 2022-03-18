@@ -1,5 +1,5 @@
 const { basename } = require('path')
-const { requireBundlerbConfig } = require('../utils')
+const { requireBundlerbConfig } = require('../../utils')
 
 const config = requireBundlerbConfig()
 

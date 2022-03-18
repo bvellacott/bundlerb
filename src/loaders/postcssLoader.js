@@ -1,7 +1,7 @@
 const { join, dirname } = require('path')
 const postcss = require('postcss')
-const BBError = require('./BBError')
-const { requireBundlerbConfig } = require('../utils')
+const BBError = require('../BBError')
+const { requireBundlerbConfig } = require('../../utils')
 
 const config = requireBundlerbConfig()
 

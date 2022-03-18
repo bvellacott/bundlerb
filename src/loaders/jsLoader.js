@@ -1,6 +1,6 @@
 const { join, relative } = require('path')
 const babel = require('@babel/core')
-const BBError = require('./BBError')
+const BBError = require('../BBError')
 
 const loadJsDependencies = api => (module, index) => new Promise((resolve, reject) => {
   module.js = module.js || { result: {} }
