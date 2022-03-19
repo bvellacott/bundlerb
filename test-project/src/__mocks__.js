@@ -36,9 +36,6 @@ const init = () => {
 
 init()
 
-// resume the loading sequence [see "preload.js" for details]
-define.resume()
-
 if (isDev) {
   addWebsocketControlClient({
     actions: {
