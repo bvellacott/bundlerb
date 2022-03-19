@@ -1,5 +1,18 @@
 'use strict';
 
+function hashUrl(url) {
+  if (
+    process.env.NODE_ENV === 'production'
+    && !url.startsWith('!-')
+    && url !== 'module'
+    && url !== 'exports'
+    && url !== 'require'
+  ) {
+    return '!-' + hashSum(url)
+  }
+  return url
+}
+
 self.define = (function initialiseDefine() {
   var assetRoot = self.ASSET_ROOT || ''
   var isOpera = typeof opera !== 'undefined' && opera.toString() === '[object Opera]';
@@ -47,13 +60,13 @@ self.define = (function initialiseDefine() {
       } else if (url === 'require') {
         return require
       }
-      return define.modules[url].exports;
+      return define.modules[hashUrl(url)].exports;
     }).concat(module));
     module.status = 'loaded';
   }
 
   function require(url) {
-    var module = self.define.modules[url]
+    var module = self.define.modules[hashUrl(url)]
     load(module)
     return module.exports;
   }
@@ -61,8 +74,10 @@ self.define = (function initialiseDefine() {
   function onDependenciesLoaded(module) {
     load(module)
     for (var url in define.modules) {
-      var listModule = define.modules[url];
+      var listModule = define.modules[hashUrl(url)];
       var dependencies = listModule.dependencies;
+
+      // not sure about this one
       if (listModule.status === 'loading' && dependencies[module.url]) {
         dependencies[module.url] = false;
         validateModule(listModule);
@@ -74,7 +89,7 @@ self.define = (function initialiseDefine() {
     var dependencies = module.dependencies;
     var loaded = true;
     for (var url in dependencies) {
-      var dependency = define.modules[url];
+      var dependency = define.modules[hashUrl(url)];
       var hasNotLoaded = 
         url !== 'exports' &&
         url !== 'module' &&
@@ -98,6 +113,7 @@ self.define = (function initialiseDefine() {
     function onScriptLoad(evt) {
       var script = getScriptFrom(evt);
       removeListeners(script, onScriptLoad, onScriptError);
+      validateModule(module)
     }
 
     function onScriptError(evt) {
@@ -109,15 +125,9 @@ self.define = (function initialiseDefine() {
     var target = document.head;
 
     module.depUrls.forEach(function (url) {
-      if (define.modules[url] || url === 'module' || url === 'exports' || url === 'require') {
+      if (self.define.modules[hashUrl(url)] || url === 'module' || url === 'exports' || url === 'require') {
         return;
       }
-
-      module = { 
-        url,
-        status: 'fetching',
-      };
-      define.modules[url] = module;
 
       var script = document.createElement('script');
       script.type = 'text/javascript';
@@ -181,9 +191,9 @@ self.define = (function initialiseDefine() {
       throw new Error('You must provide a url when defining a module');
     }
 
-    var module = define.modules[url] || {};
+    var module = self.define.modules[hashUrl(url)] || {};
     if (module && module.status && module.status !== 'fetching') {
-      throw new Error(`The module '${url}' has been defined already`);
+      throw new Error(`The module '${hashUrl(url)}' has been defined already`);
     }
 
     module.url = url;
@@ -196,13 +206,13 @@ self.define = (function initialiseDefine() {
     module.exports = {};
     module.status = 'loading';
 
-    define.modules[url] = module;
+    self.define.modules[hashUrl(url)] = module;
 
     if (define.suspendedModules) {
       define.suspendedModules.push(module)
-    } else (
+    } else {
       loadAsync(module, options)
-    )
+    }
   };
   define.suspend = function() { define.suspendedModules = [] }
   define.resume = function() {
@@ -223,7 +233,7 @@ self.requireAsync = (function initialiseRequire() {
     var name = '__anonymous__' + anonymousModuleCount++
     self.define(name, depUrls, function() {
       callback.apply(this, arguments);
-      delete define.modules[name];
+      delete define.modules[hashUrl(name)];
     }, options);
   };
 })();

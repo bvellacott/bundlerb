@@ -5,9 +5,7 @@ const cssnano = require('cssnano')
 const postcssCustomProperties = require('postcss-custom-properties')
 
 const addMissingRequireMisc = require('bundlerb/babel-plugins/transform-add-missing-require-misc-to-amd').default
-const transformPackFilepaths = require('bundlerb/babel-plugins/transform-pack-filepaths').default
-
-const isProd = process.env.NODE_ENV === 'production'
+const transformHashFilepaths = require('bundlerb/babel-plugins/transform-hash-filepaths').default
 
 const jsxPluginConfig = [
   '@babel/plugin-transform-react-jsx', {
@@ -34,8 +32,8 @@ module.exports = {
       presets: [
         {
           plugins: [
+            transformHashFilepaths, // ! needed for asyncRequire to work in prod !
             addMissingRequireMisc, // keep for default bundling
-            isProd ? transformPackFilepaths : null, // keep for minification
             jsxPluginConfig, // keep for default bundling
             '@babel/plugin-transform-classes',
             '@babel/plugin-transform-destructuring',
@@ -86,7 +84,8 @@ module.exports = {
     warnings: false,
   },
   preloadScripts: [
-    readFileSync(require.resolve(`bundlerb/client/bequire${isProd ? '.min' : ''}`, 'utf8')),
+    readFileSync(require.resolve('bundlerb/utils/hash-sum-client', 'utf8')),
+    readFileSync(require.resolve('bundlerb/client/bequire', 'utf8')),
     'define.suspend()',
   ],
   postloadScripts: [

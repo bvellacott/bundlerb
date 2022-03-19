@@ -13,6 +13,10 @@ export default (req, res) => {
     <head>
       <title>BundlerB</title>
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+      <script>
+        {`window.process = {env: {NODE_ENV: '${process.env.NODE_ENV}'}}`}
+      </script>
+      <script async src="/src/index.js"></script>
       <link rel="stylesheet" href="/src/index.jscss" />
     </head>
     <body>
@@ -21,10 +25,6 @@ export default (req, res) => {
           <App path={req.path} />
         </Provider>
       </div>
-      <script>
-        {`window.process = {env: {NODE_ENV: '${process.env.NODE_ENV}'}}`}
-      </script>
-      <script src="/src/index.js"></script>
     </body>
   </html>);
 }

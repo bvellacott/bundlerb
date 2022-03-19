@@ -44,7 +44,7 @@ const api = {
     sourcemaps: true,
     sourceSeparator: '\n',
     mapFileSuffix: '.map',
-    supportAsyncRequire: false,
+    supportAsyncRequire: true,
     ...options,
     syntaxPlugins: options.syntaxPlugins || [],
     defaultBabelOptions: {

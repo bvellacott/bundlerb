@@ -4,24 +4,39 @@ const {
 const {
   isValidRequireCall,
   isValidDefineCall,
-  pack,
 } = require('../../utils')
+const hashSum = require('../../utils/hash-sum')
 
-const dontPack = {
+const isProd = process.env.NODE_ENV === 'production'
+
+const dontHash = {
   exports: true,
   module: true,
   require: true,
 }
 
-const TransformPackFilepaths = () => {
+function hashUrl(url) {
+  if (
+    isProd
+    && !url.startsWith('!-')
+    && url !== 'module'
+    && url !== 'exports'
+    && url !== 'require'
+  ) {
+    return '!-' + hashSum(url)
+  }
+  return url
+}
+
+const TransformHashFilepaths = () => {
   return function() {
-    function packFilePaths(defineCallExpression) {
+    function hashFilePaths(defineCallExpression) {
       try {
         const name = defineCallExpression.node.arguments[0].value
         const { elements } = defineCallExpression.node.arguments[1]
-        defineCallExpression.node.arguments[0] = stringLiteral(pack(name))
+        defineCallExpression.node.arguments[0] = stringLiteral(hashUrl(name))
         defineCallExpression.node.arguments[1].elements = elements.map(
-          ({ value }) => stringLiteral(dontPack[value] ? value : pack(value)),
+          ({ value }) => stringLiteral(dontHash[value] ? value : hashUrl(value)),
         )
       } catch (e) {
         console.log(e)
@@ -32,9 +47,9 @@ const TransformPackFilepaths = () => {
       CallExpression(callExpression) {
         if (isValidRequireCall(callExpression)) {
           const argument = callExpression.node.arguments[0]
-          argument.value = pack(argument.value)
+          argument.value = hashUrl(argument.value)
         } else if (isValidDefineCall(callExpression)) {
-          packFilePaths(callExpression)
+          hashFilePaths(callExpression)
         }
       },
     });
@@ -57,6 +72,6 @@ const TransformPackFilepaths = () => {
   };
 };
 
-exports.TransformPackFilepaths = TransformPackFilepaths
+exports.TransformHashFilepaths = TransformHashFilepaths
 
-exports.default = TransformPackFilepaths();
+exports.default = TransformHashFilepaths();

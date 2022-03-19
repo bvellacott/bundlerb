@@ -7,6 +7,8 @@ const cssBundler = {
         concat.add(sourceMapFilename, css, index.sourcemaps && map ? map.toString() : undefined))
     module.css = module.css || { result: {} }
     module.css.result.concat = concat
+    module.css.result.postprocessedContent = concat.content
+    module.css.result.postprocessedMap = concat.sourceMap
     if (index.sourcemaps) {
       concat.add(null,
         `/*# sourceMappingURL=${basename(module.path)}${index.mapFileSuffix}${index.priorIdsString ?

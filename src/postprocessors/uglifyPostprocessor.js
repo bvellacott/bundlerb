@@ -8,9 +8,9 @@ const options = config.uglifyjs || {}
 
 const uglifyJsTarget = (module, index) => new Promise((resolve, reject) => {
   const { sourceMapFilename } = module
-  const { concat } = module.js.result
-  const postprocessedContent = concat.content.toString('utf8')
-  const postprocessedMap = concat.sourceMap.toString('utf8')
+  const { result } = module.js
+  const postprocessedContent = result.postprocessedContent.toString('utf8')
+  const postprocessedMap = result.postprocessedMap.toString('utf8')
   module
   const {
     code,
@@ -29,8 +29,8 @@ const uglifyJsTarget = (module, index) => new Promise((resolve, reject) => {
   if (error) {
     return reject(new BBError('Uglify failed to minify the code', error))
   }
-  concat.postprocessedContent = code
-  concat.postprocessedMap = map
+  result.postprocessedContent = code
+  result.postprocessedMap = map
   resolve(module)
 })
 

@@ -32,58 +32,58 @@ const initRoutes = (app, {
     })
     app.get(['/*.js', '/*.mjs'], (req, res) => {
       res.setHeader('Content-Type', 'text/javascript;charset=UTF-8')
-      res.send(req.module.js.result.concat.content)
+      res.send(req.module.js.result.postprocessedContent)
     })
     app.get(['/*.js.map', '/*.mjs.map'], (req, res) => {
       res.setHeader('Content-Type', 'application/json;charset=UTF-8')
-      res.send(req.module.js.result.concat.sourceMap)
+      res.send(req.module.js.result.postprocessedMap)
     })
     app.get('/*.jscss', (req, res) => {
       res.setHeader('Content-Type', 'text/css;charset=UTF-8')
-      res.send(req.module.jsCss.result.concat.content)
+      res.send(req.module.jsCss.result.postprocessedContent)
     })
     app.get('/*.jscss.map', (req, res) => {
       res.setHeader('Content-Type', 'text/css;charset=UTF-8')
-      res.send(req.module.jsCss.result.concat.sourceMap)
+      res.send(req.module.jsCss.result.postprocessedMap)
     })
     app.get(['/*.scss', '/*.css'], (req, res) => {
       res.setHeader('Content-Type', 'text/css;charset=UTF-8')
-      res.send(req.module.css.result.concat.content)
+      res.send(req.module.css.result.postprocessedContent)
     })
     app.get(['/*.scss.map', '/*.css.map'], (req, res) => {
       res.setHeader('Content-Type', 'application/json;charset=UTF-8')
-      res.send(req.module.css.result.concat.sourceMap)
+      res.send(req.module.css.result.postprocessedMap)
     })
   } else {
-    app.get(['/src/index.js', '/src/index.js.map'],
+    app.get(['/src/*.js', '/src/*.js.map'],
       (req, res, next) => {
         req.modulePath = req.path
         return bundler(req, res, next)
       })
-    app.get(['/src/index.jscss', '/src/index.jscss.map'],
+    app.get(['/src/*.jscss', '/src/*.jscss.map'],
       (req, res, next) => {
         req.modulePath = req.path.replace(/\.jscss/, '.js')
         return bundler(req, res, next)
       })
-    app.get(['/src/index.js'],
+    app.get(['/src/*.js'],
       (req, res) => {
         res.setHeader('Content-Type', 'text/javascript;charset=UTF-8')
-        res.send(req.module.js.result.concat.postprocessedContent)
+        res.send(req.module.js.result.postprocessedContent)
       })
-      app.get(['/src/index.js.map'], (req, res) => {
-        res.setHeader('Content-Type', 'application/json;charset=UTF-8')
-        res.send(req.module.js.result.concat.postprocessedMap)
-      })
-      app.get('/src/index.jscss',
-      (req, res) => {
-        res.setHeader('Content-Type', 'text/css;charset=UTF-8')
-        res.send(req.module.jsCss.result.concat.content)
-      })
-      app.get('/src/index.jscss.map', (req, res) => {
-        res.setHeader('Content-Type', 'text/css;charset=UTF-8')
-        res.send(req.module.jsCss.result.concat.sourceMap)
-      })
-    }
+    app.get(['/src/*.js.map'], (req, res) => {
+      res.setHeader('Content-Type', 'application/json;charset=UTF-8')
+      res.send(req.module.js.result.postprocessedMap)
+    })
+    app.get('/src/*.jscss',
+    (req, res) => {
+      res.setHeader('Content-Type', 'text/css;charset=UTF-8')
+      res.send(req.module.jsCss.result.postprocessedContent)
+    })
+    app.get('/src/*.jscss.map', (req, res) => {
+      res.setHeader('Content-Type', 'text/css;charset=UTF-8')
+      res.send(req.module.jsCss.result.postprocessedMap)
+    })
+  }
   setupSsrRoutes(app)
 }
 

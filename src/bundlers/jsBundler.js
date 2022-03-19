@@ -51,18 +51,21 @@ const jsBundler = {
     }
     module.js = module.js || { result: {} }
     module.js.result.concat = concat
+    module.js.result.postprocessedContent = concat.content
+    module.js.result.postprocessedMap = concat.sourceMap
   },
   invalidate: module => delete module.js,
   hasCachedResult: module => !!module.js,
   invalidateConcatCache: module => {
     if (jsBundler.hasCachedConcat(module)) {
-      delete module.js.result.concat
+      delete module.js.result.postprocessedContent
+      delete module.js.result.postprocessedMap
     }
     Object.values(module.dependants).forEach(
       d => jsBundler.invalidateConcatCache(d),
     )
   },
-  hasCachedConcat: module => !!module.js && !!module.js.result && !!module.js.result.concat,
+  hasCachedConcat: module => !!module.js && !!module.js.result && !!module.js.result.postprocessedContent,
 }
 
 exports.jsBundler = jsBundler
