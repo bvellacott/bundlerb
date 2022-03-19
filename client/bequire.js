@@ -3,12 +3,12 @@
 function hashUrl(url) {
   if (
     process.env.NODE_ENV === 'production'
-    && !url.startsWith('!-')
+    && !url.startsWith('!')
     && url !== 'module'
     && url !== 'exports'
     && url !== 'require'
   ) {
-    return '!-' + hashSum(url)
+    return '!' + hashSum(url)
   }
   return url
 }
@@ -60,7 +60,8 @@ self.define = (function initialiseDefine() {
       } else if (url === 'require') {
         return require
       }
-      return define.modules[hashUrl(url)].exports;
+      const dependency = define.modules[hashUrl(url)]
+      return dependency ? dependency.exports : undefined
     }).concat(module));
     module.status = 'loaded';
   }

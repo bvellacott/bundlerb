@@ -18,12 +18,12 @@ const dontHash = {
 function hashUrl(url) {
   if (
     isProd
-    && !url.startsWith('!-')
+    && !url.startsWith('!')
     && url !== 'module'
     && url !== 'exports'
     && url !== 'require'
   ) {
-    return '!-' + hashSum(url)
+    return '!' + hashSum(url)
   }
   return url
 }
