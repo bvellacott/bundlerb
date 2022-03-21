@@ -29,11 +29,7 @@ const init = () => {
 
   const renderApp = () => {
     const root = document.getElementById('root')
-    if (root.firstChild) {
-      render(<Main />, root, root.firstChild)
-    } else {
-      render(<Main />, root)
-    }
+    render(<Main />, root)
   }
 
   renderApp()
