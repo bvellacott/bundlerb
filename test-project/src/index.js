@@ -26,22 +26,36 @@ const init = () => {
   }, store)
   actions.navigate(document.location)
 
-  render(<Main />, document.getElementById('root'))
+  const renderApp = () => {
+    const root = document.getElementById('root')
+    if (root.firstChild) {
+      render(<Main />, root, root.firstChild)
+    } else {
+      render(<Main />, root)
+    }
+  }
+  renderApp()
+
+  if (isDev) {
+    addWebsocketControlClient({
+      actions: {
+        fileChanged: (id, { filename = '' }) => {
+          if (filename.endsWith('.css') || filename.endsWith('.scss')) {
+            const style = document.querySelector('link[href*="/src/index.jscss"]')
+            style.setAttribute('href', `/src/index.jscss?change=${id}`)
+          } else if (filename.endsWith('.js') || filename.endsWith('.jsx') || filename.endsWith('.mjs')) {
+            requireAsync(filename, () => {
+              const script = document.querySelector(`link[href*="${filename}"]`)
+              if (script) {
+                document.head.removeChild(script)
+              }
+              renderApp()
+            }, { force: true })
+          }
+        }
+      }
+    })
+  }
 }
 
 init()
-
-if (isDev) {
-  addWebsocketControlClient({
-    actions: {
-      fileChanged: (id, { filename = '' }) => {
-        if (filename.endsWith('.css') || filename.endsWith('.scss')) {
-          const style = document.querySelector('link[href*="/src/index.jscss"]')
-          style.setAttribute('href', `/src/index.jscss?change=${id}`)
-        } else if (filename.endsWith('.js') || filename.endsWith('.jsx') || filename.endsWith('.mjs')) {
-          document.location.reload()
-        }
-      }
-    }
-  })
-}

@@ -4,8 +4,8 @@ const {
 const {
   isValidRequireCall,
   isValidDefineCall,
+  hashUrl,
 } = require('../../utils')
-const hashSum = require('../../utils/hash-sum')
 
 const isProd = process.env.NODE_ENV === 'production'
 
@@ -13,19 +13,6 @@ const dontHash = {
   exports: true,
   module: true,
   require: true,
-}
-
-function hashUrl(url) {
-  if (
-    isProd
-    && !url.startsWith('!')
-    && url !== 'module'
-    && url !== 'exports'
-    && url !== 'require'
-  ) {
-    return '!' + hashSum(url)
-  }
-  return url
 }
 
 const TransformHashFilepaths = () => {

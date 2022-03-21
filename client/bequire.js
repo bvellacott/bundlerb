@@ -1,21 +1,60 @@
 'use strict';
 
-function hashUrl(url) {
-  if (
-    process.env.NODE_ENV === 'production'
-    && !url.startsWith('!')
-    && url !== 'module'
-    && url !== 'exports'
-    && url !== 'require'
-  ) {
-    return '!' + hashSum(url)
-  }
-  return url
-}
-
-self.define = (function initialiseDefine() {
-  var assetRoot = self.ASSET_ROOT || ''
+this.define = (function initialiseDefine() {
   var isOpera = typeof opera !== 'undefined' && opera.toString() === '[object Opera]';
+  var jsFileRegex = /\.js$|\.mjs$\.jsx$/
+  var urlRegex = /(.*:|.*?)(\/\/|.*?)(.*?)(\/.*?)(\?.*?|#.*?|$)(#.*|$)/;
+
+  function hashUrl(url) {
+    if (
+      process.env.NODE_ENV === 'production'
+      && !url.startsWith('!')
+      && url !== 'module'
+      && url !== 'exports'
+      && url !== 'require'
+    ) {
+      return '!' + hashSum(url)
+    }
+    return url
+  }
+  
+  function parseUrl(url) {
+    var parts = urlRegex.exec(url);
+    if (!parts) {
+      return {};
+    }
+    var search = parts[5];
+    var hash = parts[6];
+    if (!search.startsWith('?')) {
+      hash = search;
+      search = '';
+    }
+    if (!hash.startsWith('#')) {
+      hash = '';
+    }
+    return {
+      protocol: parts[1],
+      host: parts[3],
+      pathname: parts[4],
+      search,
+      hash,
+      searchParams: search
+        .replace(/^\?/, '')
+        .split('&')
+        .reduce((params, kv) => {
+            var kvPair = kv.split('=')
+            params[kvPair[0]] = kvPair[1]
+            return params
+          }, {})
+    };
+  }
+
+  function normalisePath(path) {
+    if (path.startsWith('!')) {
+      return path
+    }
+    return '.' + parseUrl(path).pathname
+  }
 
   function getScriptFrom(evt) {
     //Using currentTarget instead of target for Firefox 2.0's sake. Not
@@ -45,101 +84,146 @@ self.define = (function initialiseDefine() {
     removeListener(script, onScriptError, 'error');
   }
 
-  var dontLoadStatuses = { loaded: true, inCallback: true }
+  function require(url) {
+    var module = define.modules[hashUrl(url)]
+    load(module)
+    return module.exports;
+  }
 
+  // load the module and pass it all its dependencies
   function load(module) {
-    if (dontLoadStatuses[module.status]) {
-      return
+    if (module.status !== 'loading') {
+      return;
     }
     module.status = 'inCallback';
-    module.callback.apply(module, module.depUrls.map(function (url) {
+    module.callback.apply(module, module.dependencies.map(function (url) {
       if (url === 'module') {
         return module;
       } else if (url === 'exports') {
-        return module.exports
+        return module.exports;
       } else if (url === 'require') {
-        return require
+        return require;
       }
-      const dependency = define.modules[hashUrl(url)]
-      return dependency ? dependency.exports : undefined
+      const dependency = define.modules[hashUrl(normalisePath(url))];
+      return dependency ? dependency.exports : undefined;
     }).concat(module));
     module.status = 'loaded';
   }
 
-  function require(url) {
-    var module = self.define.modules[hashUrl(url)]
-    load(module)
-    return module.exports;
-  }
-  
-  function onDependenciesLoaded(module) {
-    load(module)
-    for (var url in define.modules) {
-      var listModule = define.modules[hashUrl(url)];
-      var dependencies = listModule.dependencies;
-
-      // not sure about this one
-      if (listModule.status === 'loading' && dependencies[module.url]) {
-        dependencies[module.url] = false;
-        validateModule(listModule);
+  // this is used to validate ancestor modules once a child module has loaded
+  function validateDependentModules(module) {
+    const hashedUrl = hashUrl(module.url)
+    for (var defineModuleUrl in define.modules) {
+      var dependent = define.modules[defineModuleUrl]
+      if (dependent.dependencies.indexOf(hashedUrl) >= 0) {
+        dependent.status === 'loading'
+        load(dependent)
+        validateDependentModules(dependent)
       }
     }
   }
 
+  // check if the all the dependencies are loaded
+  // and load the module if so
   function validateModule(module) {
-    var dependencies = module.dependencies;
-    var loaded = true;
-    for (var url in dependencies) {
-      var dependency = define.modules[hashUrl(url)];
-      var hasNotLoaded = 
-        url !== 'exports' &&
-        url !== 'module' &&
-        url !== 'require' && (
-          !dependency || 
-          dependency.status !== 'loaded'
+    if (module.status === 'loaded') {
+      return true;
+    }
+    var dependenciesLoaded = true;
+    for (var i = 0; i < module.dependencies.length; i++) {
+      var url = module.dependencies[i];
+      dependenciesLoaded = (
+        url === 'exports' ||
+        url === 'module' ||
+        url === 'require'
         );
-      dependencies[url] = hasNotLoaded;
-      if (dependencies[url]) {
-        loaded = false;
+        if (dependenciesLoaded) {
+          continue;
+        }
+        url = normalisePath(url);
+        var dependency = define.modules[hashUrl(url)];
+        dependenciesLoaded = (
+          !!dependency && dependency.status === 'loaded'
+        );
+      if (!dependenciesLoaded) {
+        break;
       }
     }
-    if (loaded) {
-      onDependenciesLoaded(module);
+    if (dependenciesLoaded) {
+      load(module);
+      validateDependentModules(module)
+      return true;
     }
+  }
+
+  function initModule(url, callback, dependencies, status) {
+    const hashedUrl = hashUrl(url);
+    var module = define.modules[hashedUrl];
+    if (!module) {
+      module = {
+        url: url,
+        exports: {},
+      };
+      define.modules[hashedUrl] = module;
+    }
+    module.callback = callback;
+    module.dependencies = dependencies;
+    module.status = status;
+    return module;
   }
 
   function loadAsync(module, options) {
-    validateModule(module);
+    // check if all dependencies for the module are resolved
+    // in which case you should refetch the dependencies only if `force: true`
+    if (!options.force && validateModule(module)) {
+      return;
+    }
 
     function onScriptLoad(evt) {
       var script = getScriptFrom(evt);
       removeListeners(script, onScriptLoad, onScriptError);
-      validateModule(module)
+      validateModule(module);
     }
 
-    function onScriptError(evt) {
+    function onScriptError(evt) {dependenciesLoaded
       var script = getScriptFrom(evt);
       removeListeners(script, onScriptLoad, onScriptError);
       throw new Error('Failed to load: ' + script.src + '\n\n' + evt); // better ways of rendering evt?
     }
 
-    var target = document.head;
-
-    module.depUrls.forEach(function (url) {
-      if (self.define.modules[hashUrl(url)] || url === 'module' || url === 'exports' || url === 'require') {
+    // load the dependencies using an async script tag
+    module.dependencies.forEach(function (url) {
+      if ((
+          define.modules[hashUrl(url)]
+          && !options.force
+        )
+        || url === 'module'
+        || url === 'exports'
+        || url === 'require'
+      ) {
         return;
+      }
+
+      // only actually support loading js files for now
+      if (!jsFileRegex.test(url)) {
+        var nonJsDependency = initModule(url, function(){}, [], 'loading')
+        validateModule(nonJsDependency)
+        return
       }
 
       var script = document.createElement('script');
       script.type = 'text/javascript';
       script.charset = 'utf-8';
       script.async = true;
-      var params = [];
+      var params = [
+        options.loadStyles && 'loadStyles=1',
+        'noLoadWrap=1',
+        'priorIds=' + define.priorIds.join(','),
+      ].filter(p => p);
       for(var key in (options.params || {})) {
         params.push(key + '=' + options.params[key])
       }
-      var paramsString = params.length ? '&' + params.join('&') : ''
-      script.src = assetRoot + url + '?noLoadWrap=1&priorIds=' + self.define.priorIds.join(',') + paramsString;
+      script.src = url + '?' + params.join('&');
 
       //Set up load listener. Test attachEvent first because IE9 has
       //a subtle issue in its addEventListener and script onload firings
@@ -178,43 +262,33 @@ self.define = (function initialiseDefine() {
         //and then destroys all installs of IE 6-9.
         //script.attachEvent('onerror', context.onScriptError);
       } else {
-          script.addEventListener('load', onScriptLoad, false);
-          script.addEventListener('error', onScriptError, false);
-        }
+        script.addEventListener('load', onScriptLoad, false);
+        script.addEventListener('error', onScriptError, false);
+      }
 
-      target.append(script);
+      document.head.append(script);
     });
   }
 
-  function define(url, depUrls, callback, options) {
+  function define(_url, dependencies, callback, options) {
+    var url = normalisePath(_url)
+    dependencies = Array.isArray(dependencies) ? dependencies : [dependencies]
     options = options || {}
     if (!url) {
       throw new Error('You must provide a url when defining a module');
     }
 
-    var module = self.define.modules[hashUrl(url)] || {};
-    if (module && module.status && module.status !== 'fetching') {
-      throw new Error(`The module '${hashUrl(url)}' has been defined already`);
-    }
-
-    module.url = url;
-    module.depUrls = depUrls;
-    module.dependencies = depUrls && depUrls.reduce(function(deps, url) {
-      deps[url] = true;
-      return deps;
-    }, {});
-    module.callback = callback;
-    module.exports = {};
-    module.status = 'loading';
-
-    self.define.modules[hashUrl(url)] = module;
+    var module = initModule(url, callback, dependencies, 'loading')
 
     if (define.suspendedModules) {
-      define.suspendedModules.push(module)
+      if (define.suspendedModules.indexOf(module) < 0) {
+        define.suspendedModules.push(module)
+      }
     } else {
       loadAsync(module, options)
     }
   };
+
   define.suspend = function() { define.suspendedModules = [] }
   define.resume = function() {
     var suspendedModules = define.suspendedModules || []
@@ -224,20 +298,21 @@ self.define = (function initialiseDefine() {
       load(module)
     }
   }
+  
+  var requireAsync = (function initialiseRequire() {
+    var anonymousModuleCount = 0;
+    return function requireAsync(dependencies, callback, options) {
+      var name = '/__anonymous__' + anonymousModuleCount++
+      define(name, dependencies, function() {
+        callback.apply(this, arguments);
+        delete define.modules[hashUrl(name)];
+      }, options);
+    };
+  })();
 
+  this.requireAsync = requireAsync
   return define
-})();
+}).apply(this);
 
-self.requireAsync = (function initialiseRequire() {
-  var anonymousModuleCount = 0;
-  return function requireAsync(depUrls, callback, options) {
-    var name = '__anonymous__' + anonymousModuleCount++
-    self.define(name, depUrls, function() {
-      callback.apply(this, arguments);
-      delete define.modules[hashUrl(name)];
-    }, options);
-  };
-})();
-
-self.define.modules = {};
-self.define.priorIds = [];
+this.define.modules = {};
+this.define.priorIds = [];

@@ -86,10 +86,10 @@ module.exports = {
   preloadScripts: [
     readFileSync(require.resolve('bundlerb/utils/hash-sum-client', 'utf8')),
     readFileSync(require.resolve('bundlerb/client/bequire', 'utf8')),
-    'define.suspend()',
+    'define.suspend();',
   ],
   postloadScripts: [
-    'define.resume()',
+    'define.resume();',
   ],
   nodeWatch: {
     // this configures file watching for ssr

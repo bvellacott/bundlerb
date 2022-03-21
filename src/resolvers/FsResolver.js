@@ -16,33 +16,19 @@ const FsResolver = (api, matcher) => (module, index) => {
       } else {
         module.fstats = stats
         const absolutePath = path.join(index.basedir, module.path)
-        if (
-          index.nonJsExtensions.find(ext => absolutePath.endsWith(ext) &&
-          index.nonJsFiles[absolutePath]
-        )) {
+        fs.readFile(absolutePath, 'utf8', (err, contents) => {
+          if (err) {
+            return reject(err)
+          }
           updateIfChanged(
             module,
-            index.nonJsFiles[absolutePath],
+            contents,
             api,
             index,
             resolve,
             reject,
-          )          
-        } else {
-          fs.readFile(absolutePath, 'utf8', (err, contents) => {
-            if (err) {
-              return reject(err)
-            }
-            updateIfChanged(
-              module,
-              contents,
-              api,
-              index,
-              resolve,
-              reject,
-            )
-          })
-        }
+          )
+        })
       }
     })
   })

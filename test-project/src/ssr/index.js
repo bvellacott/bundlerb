@@ -1,3 +1,4 @@
+import './serverPolyfills'
 import renderMain from './views/main'
 
 export default (app) => {

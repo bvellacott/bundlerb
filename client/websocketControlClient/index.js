@@ -25,7 +25,6 @@ export const addWebsocketControlClient = (options = {}) => {
   });
 
   socket.addEventListener('message', (event) => {
-    console.log(event.data)
     const result = execute(event.data, allActions)
     if (result && typeof result === 'object') {
       socket.send(JSON.stringify(result))
@@ -38,5 +37,5 @@ export const addWebsocketControlClient = (options = {}) => {
       method: 'ping',
       params: {}
     }
-  ) => socket.send(JSON.stringify(message))  
+  ) => socket.send(JSON.stringify(message))
 }

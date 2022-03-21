@@ -22,27 +22,12 @@ const addWatchCallback = (watchCb) => {
 	}
 }
 
-const isNonJsFile = (nonJsExtensions, filename) =>
-	nonJsExtensions.find((ext) => filename.endsWith(ext))
-
-const requireNonJsFiles = (nonJsExtensions, filename, parents) => {
-	parents
-		.map(({ filename }) => filename)
-		.filter((fn) => isNonJsFile(nonJsExtensions, filename))
-		.forEach(require)
-	if (isNonJsFile(nonJsExtensions, filename)) {
-		require(filename)
-	}
-}
-
 const setupBabelSsr = (
-	nonJsFiles = {},
 	nonJsExtensions = [],
 	watchCb,
 ) => {
 	addWatchCallback(watchCb)
-	const handleNonJs = (contents, filename) => {
-		nonJsFiles[filename] = contents
+	const handleNonJs = () => {
 		return ''																																			
 	}
 
@@ -80,11 +65,6 @@ const setupBabelSsr = (
 							require.cache[filename] = {}
 							const parents = clearParentsFromCache(require.cache, [module])
 							delete require.cache[filename]
-
-							// non-js file contents need to be reloaded into the nonJsFiles object
-							// in order to be resolved by the client bundler
-							requireNonJsFiles(nonJsExtensions, filename, parents)
-						
 						} catch (e) {
 							throw new BBError(`failed to clear parent modules from cache for: ${filename}`, e)
 						}

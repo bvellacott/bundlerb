@@ -27,7 +27,8 @@ const initRoutes = (app, {
         return bundler(req, res, next)
       })
     app.get(['/*.jscss', '/*.jscss.map'], (req, res, next) => {
-      req.modulePath = req.path.replace(/\.jscss/, '.js')
+      req.modulePath = req.path.replace(/\.jscss($|\..*)/, '.js')
+      req.resourcePath = req.path.replace(/\.map$/, '')
       return bundler(req, res, next)
     })
     app.get(['/*.js', '/*.mjs'], (req, res) => {
@@ -62,7 +63,8 @@ const initRoutes = (app, {
       })
     app.get(['/src/*.jscss', '/src/*.jscss.map'],
       (req, res, next) => {
-        req.modulePath = req.path.replace(/\.jscss/, '.js')
+        req.modulePath = req.path.replace(/\.jscss($|\..*)/, '.js')
+        req.resourcePath = req.path.replace(/\.map$/, '')
         return bundler(req, res, next)
       })
     app.get(['/src/*.js'],

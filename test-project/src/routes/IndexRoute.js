@@ -3,7 +3,7 @@ import { Page } from '@/components/Page'
 import { Toolgrid } from '@/components/Toolgrid'
 import { Link } from '@/components/inputs/Link'
 import { Header } from '@/components/Header'
-import { BigLogo } from '@/components/BigLogo'
+import { LazyBigLogo } from '@/components/BigLogo/LazyBigLogo'
 
 export const IndexRoute = () => (
 	<Page>
@@ -11,7 +11,7 @@ export const IndexRoute = () => (
       <h1>BundlerB</h1>
     </Header>
     <main>
-      <BigLogo src="/bundlerb.gif" />
+      <LazyBigLogo src="/bundlerb.gif" />
     </main>
     <footer>
       <Toolgrid>

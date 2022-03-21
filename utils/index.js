@@ -4,6 +4,9 @@ const {
   transformAlias,
   transformBrowserAlias,
 } = require('bueno-repo')
+const hashSum = require('../utils/hash-sum')
+
+const isProd = process.env.NODE_ENV === 'production'
 
 const defaultConfig = {
   port: 4000,
@@ -138,20 +141,18 @@ function isValidDefineCall(nodepath) {
   return true;
 }
 
-const packMap = {}
-const unpackList = [null] // first item needs to be null so that the packed key is truthy
-
-const pack = (unpackedString) => {
-  let packed = packMap[unpackedString]
-  if (packed) {
-    return packed
+function hashUrl(url) {
+  if (
+    isProd
+    && !url.startsWith('!')
+    && url !== 'module'
+    && url !== 'exports'
+    && url !== 'require'
+  ) {
+    return '!' + hashSum(url)
   }
-  packed = unpackList.length
-  unpackList.push(unpackedString)
-  return packMap[unpackedString] = `${packed}`
+  return url
 }
-
-const unpack = (packedString) => unpackList[packedString] || packedString
 
 Object.defineProperty(exports, "__esModule", { value: true });
 
@@ -163,5 +164,4 @@ exports.browserRequireToPath = browserRequireToPath
 exports.isValidRequireCall = isValidRequireCall
 exports.isValidDefinePropertyCallOnExports = isValidDefinePropertyCallOnExports
 exports.isValidDefineCall = isValidDefineCall
-exports.pack = pack
-exports.unpack = unpack
+exports.hashUrl = hashUrl

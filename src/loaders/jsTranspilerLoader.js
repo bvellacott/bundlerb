@@ -3,7 +3,7 @@ const babel = require('@babel/core')
 const BBError = require('../BBError')
 
 const transpileJs = (module, index) => new Promise((resolve, reject) => {
-  module.js = module.js || { result: {} }
+  module.js = module.js || { result: { code: '', map: '' } }
   const result = module.js.result
   const { code, ast } = result || {}
   module.js.dependencyPaths = module.js.dependencyPaths || []

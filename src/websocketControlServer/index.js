@@ -27,7 +27,6 @@ const addWebsocketControlServer = (
     })
     websocketControl.on('connection', (ws, request, client) => {      
       ws.on('message', (msg) => {
-        console.log(msg)
         const result = execute(msg, allActions)
         if (result && typeof result === 'object') {
           ws.send(JSON.stringify(result))

@@ -16,26 +16,27 @@ const jsBundler = {
       concat.add(null, preloadContent)
     }
     if (index.supportAsyncRequire) {
-      concat.add(null, `window.define.priorIds.push(${module.id});`)
+      concat.add(null, `(function(p){p.indexOf(${module.id})<0&&p.push(${module.id})})(define.priorIds);`)
       if (index.loadStyles) {
         concat.add(null,
-          `(function() { var e = document.createElement('link'); e.setAttribute('href', '${module.path.replace(/\.js$/, '.jscss')}'); e.setAttribute('rel', 'preload'); e.setAttribute('as', 'style'); e.setAttribute('onload', "this.rel='stylesheet'"); document.getElementsByTagName('head')[0].appendChild(e); })()`
+          `(function(d,e){e=d.createElement('link');e.setAttribute('href','${module.path.replace(/\.js$/,'.jscss')}');e.setAttribute('rel','stylesheet');d.head.appendChild(e);})(document);`
         )
       }
     }
-    for (let i = 0; i < flattenedWithoutPrior.length; i++) {
-      const { path, sourceMapFilename, js } = flattenedWithoutPrior[i]
+    const allModules = [...flattenedWithoutPrior, module]
+    for (let i = 0; i < allModules.length; i++) {
+      const { path, sourceMapFilename, js } = allModules[i]
       if (!js) {
         throw new Error(`the module '${path} has no js target'`)
       } else if (!js.result) {
-        console.log(js)
         throw new Error(`the module '${path} has no js target result'`)
-      } else if (!js.result.code) {
+      } else if (typeof js.result.code !== 'string') {
         throw new Error(`the module '${path} has no js target result code'`)
       }
-      const { result: { code, map }} = js
+      const { result: { code, map } } = js
       concat.add(sourceMapFilename, code, index.sourcemaps ? map : undefined)
     }
+
     if (!noLoadWrap) {
       if (typeof postloadContent !== 'string') {
         postloadContent = config.postloadScripts.join('\n')

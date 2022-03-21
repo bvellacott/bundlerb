@@ -8,7 +8,7 @@
     "start:prod": "NODE_ENV=production node asset-server/run-dev.js",
     "start:debug": "NODE_ENV=development node --inspect asset-server/run-dev.js",
     "start:test:prod": "NODE_ENV=production node asset-server/run-dev.js",
-    "start:test:prod:debug": "NODE_ENV=production node --inspect-brk asset-server/run-dev.js",
+    "start:test:prod:debug": "NODE_ENV=production node --inspect asset-server/run-dev.js",
     "build:static": "node scripts/buildStatic.js"
   },
   "repository": {
@@ -36,13 +36,16 @@
     "@babel/plugin-transform-modules-commonjs": "7.10.4",
     "@babel/plugin-transform-react-jsx": "7.10.4",
     "@babel/preset-env": "7.11.5",
-    "buffer": "^6.0.3",
-    "cssnano": "4.1.10",
-    "postcss-custom-properties": "10.0.0",
-    "postcss-nested": "5.0.1",
+    "buffer": "6.0.3",
+    "cssnano": "5.1.4",
+    "postcss-custom-properties": "12.1.4",
+    "postcss-nested": "5.0.6",
     "preact": "10.3.1",
     "preact-render-to-string": "5.1.4",
     "redux-zero": "5.1.6"
+  },
+  "peerDependencies": {
+    "postcss": "8.4.12"
   },
   "moduleAliases": {
     "^@/": "./src/"

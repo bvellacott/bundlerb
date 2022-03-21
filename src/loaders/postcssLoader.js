@@ -1,39 +1,23 @@
-const { join, dirname } = require('path')
+const { basename } = require('path')
 const postcss = require('postcss')
 const BBError = require('../BBError')
 const { requireBundlerbConfig } = require('../../utils')
+const bundlerbPostcssLoader = require('../../postcss-plugins/bundlerb-postcss-loader')
 
 const config = requireBundlerbConfig()
 
 const loadCssTarget = api => (module, index) => new Promise((resolve, reject) => {
   module.css = module.css || {}
-  module.css.dependencyPaths = []
+  module.css.dependencyPaths = module.css.dependencyPaths || []
   postcss(config.postcss.plugins)
-    .use(postcss.plugin('postcss-loader', function (options) {
-      return function (root, result) {
-        root.each(node => {
-          if (node.type === 'atrule' && node.name === 'import') {
-            if (typeof node.params !== 'string') {
-              result.warn('Unable to resolve import', { node })
-            }
-            const matchResult = /\s*["']\s*([^'"\s]+){1}\s*["']\s*/.exec(node.params)
-            if (!matchResult) {
-              result.warn('Unable to resolve import', { node })
-            }
-            const relativePath = matchResult[1]
-            const dependencyPath = `./${join(dirname(module.path), relativePath)}`
-            module.css.dependencyPaths.push(dependencyPath)
-            node.remove()
-          }
-        })
-      }
-    }))
+    .use(bundlerbPostcssLoader(module))
     .process(module.contents, {
       from: module.sourceMapFilename,
-      to: module.sourceMapFilename,
+      to: basename(module.sourceMapFilename),
       map: {
         inline: false,
         annotation: false,
+        sourcesContent: true,
       },
     })
     .then(async result => {

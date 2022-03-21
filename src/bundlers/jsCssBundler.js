@@ -3,22 +3,24 @@ const { basename } = require('path')
 const jsCssBundler = {
   matcher: /\.js$/,
   bundle: (module, flattenedWithoutPrior, index, concat, noLoadWrap) => {
-    flattenedWithoutPrior
+    [...flattenedWithoutPrior, module]
       .filter(module => module.css)
-      .forEach(({ sourceMapFilename, css: { result: { css, map }}}) =>
-      concat.add(sourceMapFilename, css, index.sourcemaps && map ? map.toString() : undefined))
-    module.jsCss = module.jsCss || { result: {} }
-    module.jsCss.result.concat = concat
-    module.jsCss.result.postprocessedContent = concat.content
-    module.jsCss.result.postprocessedMap = concat.sourceMap
+      .forEach(({ sourceMapFilename, css: { result: { css, map }}}) => (
+        concat.add(sourceMapFilename, css, index.sourcemaps && map ? map.toString() : undefined)
+      ))
     const filename = basename(module.path).replace(/\.js$/, '.jscss')
     if (index.sourcemaps) {
+      concat.add(filename, '')
       concat.add(null,
         `/*# sourceMappingURL=${filename}${index.mapFileSuffix}${index.priorIdsString ?
           `?priorIds=${index.priorIdsString} */` :
           ' */'}`
       )
     }
+    module.jsCss = module.jsCss || { result: {} }
+    module.jsCss.result.concat = concat
+    module.jsCss.result.postprocessedContent = concat.content
+    module.jsCss.result.postprocessedMap = concat.sourceMap
   },
   invalidate: module => delete module.jsCss,
   hasCachedResult: module => !!module.jsCss,

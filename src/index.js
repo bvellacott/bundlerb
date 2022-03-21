@@ -1,5 +1,5 @@
 const Concat = require('concat-with-sourcemaps')
-const { join, relative, dirname } = require('path')
+const { join, relative, dirname, basename } = require('path')
 const { TransformImportsToCommonRoot } = require('../babel-plugins/transform-imports-to-common-root')
 const BBError = require('./BBError')
 const { FsResolver } = require('./resolvers/FsResolver')
@@ -19,7 +19,6 @@ const api = {
   defaultNodeModulesDir: join(process.cwd(), 'node_modules'),
 
   buildIndex: (options = {}) => ({
-    nonJsFiles: {},
     nonJsExtensions: ['.scss', '.css'],
     resolvers: [ FsResolver(api, /.*/) ],
     loaders: [
@@ -169,11 +168,11 @@ const api = {
     const flattenedWithoutPrior = api
       .flatten(module)
       .reverse()
-      .filter(module => {
-        if (alreadyResolved[module.id] || priorIds[module.id]) {
+      .filter(dep => {
+        if (alreadyResolved[dep.id] || priorIds[dep.id] || dep === module) {
           return false
         }
-        alreadyResolved[module.id] = module
+        alreadyResolved[dep.id] = dep
         return true
       })
 
@@ -184,7 +183,7 @@ const api = {
         const { bundle } = bundler
         const concat = new Concat(
           index.sourcemaps,
-          `${module.path}${priorIdsString ? `?priorIds=${priorIdsString}` : ''}`,
+          `${basename(index.req.resourcePath || module.path)}${priorIdsString ? `?priorIds=${priorIdsString}` : ''}`,
           index.sourceSeparator
         )
         promises.push(bundle(

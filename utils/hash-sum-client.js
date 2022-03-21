@@ -1,5 +1,5 @@
 'use strict';
-(function(global) {
+this.hashSum = (function initialiseDefine(global) {
   function pad (hash, len) {
     while (hash.length < len) {
       hash = '0' + hash;
@@ -66,5 +66,5 @@
     return pad(foldValue(0, o, '', []).toString(16), 8);
   }
   
-  global.hashSum = sum;
+  return sum;
 })(this)

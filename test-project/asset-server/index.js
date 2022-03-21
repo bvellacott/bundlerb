@@ -1,4 +1,5 @@
 require('bueno-repo').setupAliases()
+const path = require('path')
 const express = require('express')
 const {
   buildIndex,
@@ -19,7 +20,6 @@ const index = buildIndex({
 })
 
 setupBabelSsr(
-  index.nonJsFiles,
   index.nonJsExtensions,
 )
 
@@ -51,7 +51,7 @@ const start = (port, options) => {
         id: `file-changed-${changeId}`,
         method: 'fileChanged',
         params: {
-          filename,
+          filename: `./${path.relative('./', filename)}`,
         },
       })
     }
