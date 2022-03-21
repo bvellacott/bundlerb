@@ -13,7 +13,7 @@ export const Approach = () => (
     <main>
       <LazyLoad
         promise={new Promise((resolve) => {
-          requireAsync('./src/routes/ApproachContent.js', ({ ApproachContent }) => {
+          requireAsync('/src/routes/ApproachContent.js', ({ ApproachContent }) => {
             resolve(<ApproachContent />)
           }, { loadStyles: true, force: true })
         })}

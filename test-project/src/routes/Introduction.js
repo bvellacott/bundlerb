@@ -13,7 +13,7 @@ export const Introduction = () => (
     <main>
       <LazyLoad
         promise={new Promise((resolve) => {
-          requireAsync('./src/routes/IntroductionContent.js', ({ IntroductionContent }) => {
+          requireAsync('/src/routes/IntroductionContent.js', ({ IntroductionContent }) => {
             resolve(<IntroductionContent />)
           }, { loadStyles: true })
         })}

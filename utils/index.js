@@ -85,7 +85,7 @@ const requireToPath = (req, filedir, basedir, isBrowser) => {
       { basedir: filedir, packageFilter },
     )
   }
-  return `./${relative(basedir, absolutePath)}`
+  return `/${relative(basedir, absolutePath)}`
 }
 
 const isValidRequireCall = nodepath => {

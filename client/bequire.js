@@ -53,7 +53,7 @@ this.define = (function initialiseDefine() {
     if (path.startsWith('!')) {
       return path
     }
-    return '.' + parseUrl(path).pathname
+    return parseUrl(path).pathname
   }
 
   function getScriptFrom(evt) {

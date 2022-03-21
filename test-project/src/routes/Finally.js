@@ -14,7 +14,7 @@ export const Finally = () => (
     <main>
       <LazyLoad
         promise={new Promise((resolve) => {
-          requireAsync('./src/routes/FinallyContent.js', ({ FinallyContent }) => {
+          requireAsync('/src/routes/FinallyContent.js', ({ FinallyContent }) => {
             resolve(<FinallyContent />)
           }, { loadStyles: true })
         })}

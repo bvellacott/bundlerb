@@ -1,3 +1,4 @@
+import './clientPolyfills'
 import { addWebsocketControlClient } from 'bundlerb/client/websocketControlClient'
 import { h, render } from 'preact'
 import { Provider } from 'redux-zero/preact'
@@ -34,6 +35,7 @@ const init = () => {
       render(<Main />, root)
     }
   }
+
   renderApp()
 
   if (isDev) {
