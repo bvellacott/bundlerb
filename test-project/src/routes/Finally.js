@@ -25,6 +25,7 @@ export const Finally = () => (
     <footer>
       <Toolgrid>
         <Link href="/approach.html" ><button>{'On the B'}</button></Link>
+        <Link href="/error/500.html" ><button>Break the site</button></Link>
         <Link href="/index.html" ><button>{'Home'}</button></Link>
       </Toolgrid>
       <LazyBigLogo src="/bundlerb_mirror.gif" />

@@ -68,7 +68,7 @@ const api = {
 
   resolveRootModule: async (_modulePath, index, context) => {
     let modulePath = _modulePath.trim()
-    modulePath = modulePath.replace(/^\//, './').replace(new RegExp(`\\${index.mapFileSuffix}$`), '')
+    modulePath = modulePath.replace(new RegExp(`\\${index.mapFileSuffix}$`), '')
     index.rootModulePath = modulePath
     try {
       const module = await api.resolveModule(modulePath, index, context)

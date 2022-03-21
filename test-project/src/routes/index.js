@@ -11,6 +11,6 @@ export const Routes = ({ path }) => (
   (path === '/introduction.html' && <Introduction/>) ||
   (path === '/approach.html' && <Approach/>) ||
   (path === '/finally.html' && <Finally/>) ||
-  (path === '/500.html' && <Error/>) ||
+  (path === '/error/500.html' && <Error/>) ||
   <NotFound/>
 )

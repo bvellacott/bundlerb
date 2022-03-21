@@ -185,7 +185,7 @@ this.define = (function initialiseDefine() {
       validateModule(module);
     }
 
-    function onScriptError(evt) {dependenciesLoaded
+    function onScriptError(evt) {
       var script = getScriptFrom(evt);
       removeListeners(script, onScriptLoad, onScriptError);
       throw new Error('Failed to load: ' + script.src + '\n\n' + evt); // better ways of rendering evt?

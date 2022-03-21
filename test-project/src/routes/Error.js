@@ -8,6 +8,7 @@ import { Link } from '@/components/inputs/Link'
 import { Header } from '@/components/Header'
 import { Icon } from '@/components/Icon'
 import { CaretSvg } from '@/components/svgs/CaretSvg'
+import { LazyBigLogo } from '../components/BigLogo/LazyBigLogo';
 
 const actions = {
 	navigateBack,
@@ -29,6 +30,7 @@ export const Error = connect(null, actions)(() => (
 		</Header>
 		<main>
 			<h2 className="not-found__apology" >Sorry - an internal server error occurred</h2>
+      <LazyBigLogo src="/bundlerb.gif" force />
 		</main>
 		<footer>
 			<Toolgrid>
