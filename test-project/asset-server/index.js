@@ -51,7 +51,7 @@ const start = (port, options) => {
         id: `file-changed-${changeId}`,
         method: 'fileChanged',
         params: {
-          filename: `./${path.relative('./', filename)}`,
+          filename: `/${path.relative('./', filename)}`,
         },
       })
     }
