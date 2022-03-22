@@ -24,13 +24,15 @@ const jsCssBundler = {
   },
   invalidate: module => delete module.jsCss,
   hasCachedResult: module => !!module.jsCss,
-  invalidateConcatCache: module => {
+  invalidateConcatCache: (module, allDependants) => {
+    allDependants = allDependants || {}
+    allDependants[module.path] = module
     if (jsCssBundler.hasCachedConcat(module)) {
       delete module.jsCss.result.postprocessedContent
       delete module.jsCss.result.postprocessedMap
     }
     Object.values(module.dependants).forEach(
-      d => jsCssBundler.invalidateConcatCache(d),
+      d => (!allDependants[d.path] && jsCssBundler.invalidateConcatCache(d, allDependants)),
     )
   },
   hasCachedConcat: module => (

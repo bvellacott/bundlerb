@@ -57,13 +57,15 @@ const jsBundler = {
   },
   invalidate: module => delete module.js,
   hasCachedResult: module => !!module.js,
-  invalidateConcatCache: module => {
+  invalidateConcatCache: (module, allDependants) => {
+    allDependants = allDependants || {}
+    allDependants[module.path] = module
     if (jsBundler.hasCachedConcat(module)) {
       delete module.js.result.postprocessedContent
       delete module.js.result.postprocessedMap
     }
     Object.values(module.dependants).forEach(
-      d => jsBundler.invalidateConcatCache(d),
+      d => (!allDependants[d.path] && jsBundler.invalidateConcatCache(d, allDependants)),
     )
   },
   hasCachedConcat: module => !!module.js && !!module.js.result && !!module.js.result.postprocessedContent,

@@ -104,21 +104,29 @@ this.define = (function initialiseDefine() {
       } else if (url === 'require') {
         return require;
       }
-      const dependency = define.modules[hashUrl(normalisePath(url))];
+      var dependency = define.modules[hashUrl(normalisePath(url))];
       return dependency ? dependency.exports : undefined;
     }).concat(module));
     module.status = 'loaded';
   }
 
   // this is used to validate ancestor modules once a child module has loaded
-  function validateDependentModules(module) {
-    const hashedUrl = hashUrl(module.url)
+  function validateDependantModules(module, allDependants) {
+    var hashedUrl = hashUrl(module.url)
+    allDependants = allDependants || {}
+    allDependants[hashedUrl] = true
     for (var defineModuleUrl in define.modules) {
-      var dependent = define.modules[defineModuleUrl]
-      if (dependent.dependencies.indexOf(hashedUrl) >= 0) {
-        dependent.status === 'loading'
-        load(dependent)
-        validateDependentModules(dependent)
+      var dependant = define.modules[defineModuleUrl]
+      if (allDependants[defineModuleUrl]) {
+        continue;
+      }
+      if (
+        dependant.dependencies.indexOf(hashedUrl) >= 0
+        && dependant.status === 'loading'
+      ) {
+        allDependants[defineModuleUrl] = true
+        load(dependant)
+        validateDependantModules(dependant, allDependants)
       }
     }
   }
@@ -151,13 +159,13 @@ this.define = (function initialiseDefine() {
     }
     if (dependenciesLoaded) {
       load(module);
-      validateDependentModules(module)
+      validateDependantModules(module)
       return true;
     }
   }
 
   function initModule(url, callback, dependencies, status) {
-    const hashedUrl = hashUrl(url);
+    var hashedUrl = hashUrl(url);
     var module = define.modules[hashedUrl];
     if (!module) {
       module = {
