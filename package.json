@@ -1,6 +1,6 @@
 {
   "name": "bundlerb",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "bundles on the fly",
   "main": "src/index.js",
   "repository": {
